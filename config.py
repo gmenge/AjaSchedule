@@ -35,6 +35,7 @@ ORIGENS_NOMES_DEFAULT = {
     61: "Fibra-9", 62: "Fibra-10", 63: "Fibra-11", 64: "Fibra-12"
 }
 
+
 # Mapeamento Oficial de Destinos (1 a 64)
 DESTINOS_NOMES_DEFAULT = {
     1: "DR-1", 2: "DR-2", 3: "CRU-1 AJA 5", 4: "CRU-2 SLICE",
