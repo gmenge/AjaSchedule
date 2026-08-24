@@ -3,3 +3,5 @@ dist/
 *.spec
 Logs/
 node_modules/
+*.Log
+*.json
