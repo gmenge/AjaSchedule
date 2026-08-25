@@ -1,6 +1,6 @@
 # ==============================================================================
 # Autor: Gabriel Menge
-# Aplicação: Popups para AjaSchedule - Versão 1.05 (Suporte Multi-Idioma)
+# Aplicação: Popups para AjaSchedule - Versão 1.04 
 # ==============================================================================
 
 import tkinter as tk
