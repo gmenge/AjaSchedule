@@ -227,9 +227,106 @@ def obter_ou_perguntar_idioma(arquivo_config="config.json"):
 
     return idioma_escolhido[0]
 
+def obter_ou_perguntar_ip_matriz(arquivo_config="config.json"):
+    """
+    1. Tenta ler o IP da matriz salvo no config.json.
+    2. Se não existir, abre uma janela independente pedindo o IP.
+    3. Salva a escolha e fecha a janela para o app principal rodar limpo.
+    """
+    config_data = {}
+
+    # 1. Tenta ler o arquivo de configuração existente sem sobrescrever outras chaves (como 'idioma')
+    if os.path.exists(arquivo_config):
+        try:
+            with open(arquivo_config, "r", encoding="utf-8") as f:
+                config_data = json.load(f)
+                # Se o IP já está salvo e não está vazio, retorna diretamente
+                if "ip_matriz" in config_data and config_data["ip_matriz"].strip():
+                    return config_data["ip_matriz"]
+        except Exception:
+            pass
+
+    # 2. Se NÃO existe o IP salvo, cria a janela do Tkinter
+    root_ip = tk.Tk()
+    root_ip.title("AjaSchedule - Configuração de IP")
+    root_ip.geometry("450x200")
+    root_ip.configure(bg="#1E1E1E")
+    root_ip.resizable(False, False)
+
+    # Força a ficar na frente no Windows
+    root_ip.attributes("-topmost", True)
+
+    # Centraliza na tela
+    root_ip.update_idletasks()
+    largura, altura = 450, 200
+    pos_x = (root_ip.winfo_screenwidth() // 2) - (largura // 2)
+    pos_y = (root_ip.winfo_screenheight() // 2) - (altura // 2)
+    root_ip.geometry(f"{largura}x{altura}+{pos_x}+{pos_y}")
+
+    ip_escolhido = ["127.0.0.1"]  # IP padrão inicial
+
+    # Interface Visual
+    lbl_instrucao = tk.Label(
+        root_ip, 
+        text="Informe o IP do servidor da Matriz:", 
+        fg="white", 
+        bg="#1E1E1E", 
+        font=("Segoe UI", 11, "bold")
+    )
+    lbl_instrucao.pack(pady=(20, 10))
+
+    # Campo de Texto (Entry) para digitar o IP
+    entry_ip = tk.Entry(
+        root_ip, 
+        font=("Segoe UI", 11), 
+        justify="center", 
+        width=30
+    )
+    entry_ip.insert(0, "192.168.1.100")  # Sugestão padrão no campo
+    entry_ip.pack(pady=5)
+    entry_ip.focus_set()
+
+    def salvar_ip():
+        valor = entry_ip.get().strip()
+        if not valor:
+            messagebox.showwarning("Aviso", "O IP não pode ficar em branco!", parent=root_ip)
+            return
+
+        ip_escolhido[0] = valor
+
+        # Atualiza o arquivo de configuração mantendo chaves anteriores (ex: idioma)
+        config_data["ip_matriz"] = ip_escolhido[0]
+        try:
+            with open(arquivo_config, "w", encoding="utf-8") as f:
+                json.dump(config_data, f, indent=4)
+        except Exception as e:
+            print(f"Erro ao salvar configuração: {e}")
+
+        root_ip.destroy()
+
+    # Botão para Confirmar
+    btn_confirmar = tk.Button(
+        root_ip, 
+        text="Salvar e Continuar", 
+        command=salvar_ip, 
+        bg="#007ACC", 
+        fg="white", 
+        font=("Segoe UI", 10, "bold"), 
+        relief="flat", 
+        padx=15, 
+        pady=5
+    )
+    btn_confirmar.pack(pady=15)
+
+    # Associa a tecla 'Enter' para salvar direto
+    root_ip.bind("<Return>", lambda event: salvar_ip())
+
+    root_ip.mainloop()
+    return ip_escolhido[0]
+
 class AgendadorKumo64x64(tk.Tk):
 
-    def __init__(self, idioma_atual="en_US"):
+    def __init__(self, idioma_atual="en_US", ip_matriz=None):
         super().__init__()
 
         self.id_agendamento_em_edicao = None
@@ -251,9 +348,10 @@ class AgendadorKumo64x64(tk.Tk):
         self.minsize(1024, 680)
         self.configure(bg="#141414")
 
-        self.ip_matriz = KUMO_IP_DEFAULT
+        # Define o IP recebido da inicialização (se não vier nenhum, usa o padrão)
+        self.ip_matriz = ip_matriz if ip_matriz else KUMO_IP_DEFAULT
 
-        # Dispara a checagem de conexão com a matriz KUMO na inicialização
+        # Dispara a checagem de conexão com o IP configurado
         self.testar_conexao_inicial()
 
         self.config_frequencia = {
@@ -2309,8 +2407,11 @@ if __name__ == "__main__":
     # 2. Configura a instância estática de tradução
     I18n.set_language(idioma_definido)
 
-    # 3. Inicializa o app principal
-    app = AgendadorKumo64x64(idioma_atual=idioma_definido)
+    # 3. Obtém ou pergunta o IP da Matriz
+    ip_matriz_definido = obter_ou_perguntar_ip_matriz()
+
+    # 4. Inicializa o app principal (passando o IP obtido, se a sua classe aceitar)
+    app = AgendadorKumo64x64(idioma_atual=idioma_definido, ip_matriz=ip_matriz_definido)
 
     app.footer_label = tk.Label(
         app,
