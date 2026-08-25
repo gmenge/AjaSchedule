@@ -8,9 +8,9 @@ LOCALES = {
         "default_output_label": "Destino {num}",
 
         # Logs do Sistema e Conexão
-        "log_initialized": "AjaSchedule 1.04 inicializado e operacional.",
+        "log_initialized": "AjaSchedule inicializado e operacional.",
         "log_conn_failed": "[INICIALIZAÇÃO] FALHA DE CONEXÃO: Tempo limite esgotado (Timeout de 3s). Matriz KUMO no IP {ip} não respondeu.",
-        "log_init_app": "AjaSchedule 1.04 inicializado e operacional.",
+        "log_init_app": "AjaSchedule inicializado e operacional.",
         "log_init_testing_conn": "[INICIALIZAÇÃO] Testando conexão com a Matriz KUMO ({ip})...",
         "log_init_conn_success": "[INICIALIZAÇÃO] CONEXÃO BEM-SUCEDIDA com a Matriz KUMO ({ip}) - Equipamento Online e Operacional.",
         "log_init_conn_status": "[INICIALIZAÇÃO] Matriz KUMO ({ip}) respondeu com Status HTTP {status}.",
@@ -166,9 +166,9 @@ LOCALES = {
         "default_output_label": "Destination {num}",
 
         # System Logs & Connection
-        "log_initialized": "AjaSchedule 1.04 initialized and operational.",
+        "log_initialized": "AjaSchedule initialized and operational.",
         "log_conn_failed": "[INITIALIZATION] CONNECTION FAILED: Timeout reached (3s Timeout). KUMO Matrix at IP {ip} did not respond.",
-        "log_init_app": "AjaSchedule 1.04 initialized and operational.",
+        "log_init_app": "AjaSchedule initialized and operational.",
         "log_init_testing_conn": "[INITIALIZATION] Testing connection with KUMO Matrix ({ip})...",
         "log_init_conn_success": "[INITIALIZATION] CONNECTION SUCCESSFUL with KUMO Matrix ({ip}) - Device Online and Operational.",
         "log_init_conn_status": "[INITIALIZATION] KUMO Matrix ({ip}) responded with HTTP Status {status}.",
@@ -324,9 +324,9 @@ LOCALES = {
         "default_output_label": "Destino {num}",
 
         # Logs del Sistema y Conexión
-        "log_initialized": "AjaSchedule 1.04 inicializado y operativo.",
+        "log_initialized": "AjaSchedule inicializado y operativo.",
         "log_conn_failed": "[INICIALIZACIÓN] ERROR DE CONEXIÓN: Tiempo de espera agotado (Timeout 3s). Matriz KUMO en la IP {ip} no respondió.",
-        "log_init_app": "AjaSchedule 1.04 inicializado y operativo.",
+        "log_init_app": "AjaSchedule inicializado y operativo.",
         "log_init_testing_conn": "[INICIALIZACIÓN] Probando conexión con la Matriz KUMO ({ip})...",
         "log_init_conn_success": "[INICIALIZACIÓN] CONEXIÓN EXITOSA con la Matriz KUMO ({ip}) - Equipo Online y Operativo.",
         "log_init_conn_status": "[INICIALIZACIÓN] Matriz KUMO ({ip}) respondió con Estado HTTP {status}.",

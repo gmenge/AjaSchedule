@@ -44,7 +44,6 @@ logging.basicConfig(
 )
 
 logging.info("==================================================")
-logging.info("Inicializando AjaSchedule 1.04...")
 
 
 class GuiLogHandler(logging.Handler):
@@ -97,7 +96,7 @@ except ImportError:
         from config import MATRIX_IP
         KUMO_IP_DEFAULT = MATRIX_IP
     except ImportError:
-        KUMO_IP_DEFAULT = "172.17.100.100"
+        KUMO_IP_DEFAULT = "192.168.0.2"
 
 try:
     from componentes import HoverButton
@@ -395,7 +394,7 @@ class AgendadorKumo64x64(tk.Tk):
         self.trocar_aba("agendar")
 
         threading.Thread(target=self.loop_agendador, daemon=True).start()
-        logging.info("log_initialized")
+        logging.info(self.tr("log_initialized"))
 
     def tr(self, key, **kwargs):
         """Busca e traduz a chave com base no idioma ativo."""
@@ -858,7 +857,7 @@ class AgendadorKumo64x64(tk.Tk):
         else:
             lbl = tk.Label(
                 topo_frame,
-                text="AjaSchedule 1.04 - TV JORNAL",
+                text="AjaSchedule",
                 font=("Arial", 18, "bold"),
                 bg="#141414",
                 fg="#FFFFFF",
