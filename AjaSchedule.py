@@ -1180,6 +1180,7 @@ class AgendadorKumo64x64(tk.Tk):
         self.tree.bind(
             "<Double-1>", lambda event: self.carregar_agendamento_para_edicao()
         )
+        self.tree.bind("<Delete>", self.remover_agendamento)
 
         # RODAPÉ COM OS BOTÕES DE AÇÃO
         frame_botoes_acoes = tk.Frame(self.tab_agendador, bg="#141414")
@@ -1595,8 +1596,12 @@ class AgendadorKumo64x64(tk.Tk):
         except Exception as e:
             logging.error(f"Erro inesperado ao salvar agendamento: {e}", exc_info=True)
             messagebox.showerror("Erro", f"Falha ao processar agendamento:\n{e}")
-            
+
     def remover_agendamento(self, item_ids=None):
+        # ✅ Se for um evento enviado pelo Tkinter (.bind), ignora e trata como None
+        if hasattr(item_ids, "widget") or type(item_ids).__name__ == "Event":
+            item_ids = None
+
         str_time_at = self.tr("log_time_at")
 
         if item_ids is not None:
@@ -1995,22 +2000,37 @@ class AgendadorKumo64x64(tk.Tk):
             "DOM": "day_sun_short"
         }
 
+        # ✅ Atualização dos nomes de destino e origem nos agendamentos (compatível com Dicionário e Lista)
         for item in self.agendamentos:
-            d_idx = item["destino_num"] - 1
-            if d_idx < len(self.destinos_nomes):
-                item["destino_nome"] = self.destinos_nomes[d_idx]
+            d_num = item["destino_num"]
+            if isinstance(getattr(self, "destinos_nomes", None), dict):
+                item["destino_nome"] = self.destinos_nomes.get(
+                    d_num, f"{self.tr('label_destination')} {d_num:02d}"
+                )
             else:
-                item["destino_nome"] = f"{self.tr('label_destination')} {item['destino_num']:02d}"
+                d_idx = d_num - 1
+                if 0 <= d_idx < len(self.destinos_nomes):
+                    item["destino_nome"] = self.destinos_nomes[d_idx]
+                else:
+                    item["destino_nome"] = f"{self.tr('label_destination')} {d_num:02d}"
 
-            o_idx = item["origem_num"] - 1
-            if o_idx < len(self.origens_nomes):
-                item["origem_nome"] = self.origens_nomes[o_idx]
+            o_num = item["origem_num"]
+            if isinstance(getattr(self, "origens_nomes", None), dict):
+                item["origem_nome"] = self.origens_nomes.get(
+                    o_num, f"{self.tr('label_source')} {o_num:02d}"
+                )
             else:
-                item["origem_nome"] = f"{self.tr('label_source')} {item['origem_num']:02d}"
+                o_idx = o_num - 1
+                if 0 <= o_idx < len(self.origens_nomes):
+                    item["origem_nome"] = self.origens_nomes[o_idx]
+                else:
+                    item["origem_nome"] = f"{self.tr('label_source')} {o_num:02d}"
 
+        # Limpa elementos antigos da Treeview
         for child in self.tree.get_children():
             self.tree.delete(child)
 
+        # Popula a Treeview com os dados atualizados
         for item in self.agendamentos:
             if "uuid" not in item or not item["uuid"]:
                 item["uuid"] = str(uuid.uuid4())
