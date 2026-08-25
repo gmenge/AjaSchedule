@@ -1180,7 +1180,6 @@ class AgendadorKumo64x64(tk.Tk):
         self.tree.bind(
             "<Double-1>", lambda event: self.carregar_agendamento_para_edicao()
         )
-        self.tree.bind("<Delete>", self.remover_agendamento)
 
         # RODAPÉ COM OS BOTÕES DE AÇÃO
         frame_botoes_acoes = tk.Frame(self.tab_agendador, bg="#141414")
@@ -1278,10 +1277,22 @@ class AgendadorKumo64x64(tk.Tk):
         def callback_cancelar():
             self.resetar_formulario()
 
+        # ✅ Monta dinamicamente a lista com os labels atualizados (compatível com Dicionário e Lista)
+        if isinstance(getattr(self, "destinos_nomes", None), dict):
+            destinos_atualizados = [
+                f"[{port:02d}] {nome}"
+                for port, nome in sorted(self.destinos_nomes.items())
+            ]
+        else:
+            destinos_atualizados = [
+                f"[{i+1:02d}] {nome}"
+                for i, nome in enumerate(self.destinos_nomes)
+            ]
+
         SeletorCanalPopup(
             self,
             "destino",
-            self.destinos_combo,
+            destinos_atualizados,  # ✅ Passa a lista viva e atualizada
             callback_confirmar,
             callback_cancelar=callback_cancelar,
             valor_inicial=self.destino_selecionado
@@ -1296,10 +1307,22 @@ class AgendadorKumo64x64(tk.Tk):
         def callback_cancelar():
             self.resetar_formulario()
 
+        # ✅ Monta dinamicamente a lista com os labels atualizados (compatível com Dicionário e Lista)
+        if isinstance(getattr(self, "origens_nomes", None), dict):
+            origens_atualizadas = [
+                f"[{port:02d}] {nome}"
+                for port, nome in sorted(self.origens_nomes.items())
+            ]
+        else:
+            origens_atualizadas = [
+                f"[{i+1:02d}] {nome}"
+                for i, nome in enumerate(self.origens_nomes)
+            ]
+
         SeletorCanalPopup(
             self,
             "origem",
-            self.origens_combo,
+            origens_atualizadas,  # ✅ Passa a lista viva e atualizada
             callback_confirmar,
             callback_cancelar=callback_cancelar,
             valor_inicial=self.origem_selecionada
@@ -1314,7 +1337,6 @@ class AgendadorKumo64x64(tk.Tk):
         def callback_cancelar():
             self.resetar_formulario()
 
-        # --- CORREÇÃO MULTILÍNGUE (Usa as chaves padrão dos dias da semana) ---
         dias_todos = [
             self.tr("day_monday"),
             self.tr("day_tuesday"),
@@ -1325,8 +1347,7 @@ class AgendadorKumo64x64(tk.Tk):
             self.tr("day_sunday")
         ]
 
-        # Se for um novo cadastro e a frequência estiver vazia/zerada, marca todos os dias por padrão
-        if self.id_agendamento_em_edicao is None:
+        if getattr(self, "id_agendamento_em_edicao", None) is None:
             if not getattr(self, "config_frequencia", None) or not self.config_frequencia.get("dias"):
                 self.config_frequencia = {
                     "tipo": "recorrente",
@@ -1349,7 +1370,7 @@ class AgendadorKumo64x64(tk.Tk):
         def callback_cancelar():
             self.resetar_formulario()
 
-        val_sanitizado = sanitizar_tempo(self.hora_selecionada)
+        val_sanitizado = sanitizar_tempo(getattr(self, "hora_selecionada", "00"))
         valor_ini = f"{val_sanitizado} {self.tr('unit_hours_plural')}"
         horas_traduzidas = [f"{h:02d} {self.tr('unit_hours_plural')}" for h in range(24)]
 
