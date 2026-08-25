@@ -739,7 +739,7 @@ class AgendadorKumo64x64(tk.Tk):
         if os.path.exists(caminho_logo):
             try:
                 img_pil = Image.open(caminho_logo)
-                img_pil.thumbnail((250, 80))
+                img_pil.thumbnail((280, 100))
                 self.img_logo = ImageTk.PhotoImage(img_pil)
             except Exception as e:
                 logging.error(f"Erro ao carregar imagem da logo: {e}")
