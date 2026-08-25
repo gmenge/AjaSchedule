@@ -395,7 +395,7 @@ class AgendadorKumo64x64(tk.Tk):
         self.trocar_aba("agendar")
 
         threading.Thread(target=self.loop_agendador, daemon=True).start()
-        logging.info("AjaSchedule 1.04 inicializado e operacional.")
+        logging.info("log_initialized")
 
     def tr(self, key, **kwargs):
         """Busca e traduz a chave com base no idioma ativo."""
