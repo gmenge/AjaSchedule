@@ -22,6 +22,8 @@ LOCALES = {
         "log_time_at": "às",
         
         # Logs de Ações de Agendamento
+        "err_http_switch": "ERRO HTTP {code} ao comutar Destino [{dest:02d}] na Matriz [{ip}].",
+        "err_connection_switch": "FALHA DE CONEXÃO: Matriz KUMO [{ip}] inacessível na rede! Erro: {err}",
         "log_routine_updated": "ROTINA ATUALIZADA (ID #{id} | UUID: {uuid}): [DE] Destino [{dest_old}] <- Origem [{src_old}] {time_at} {time_old} | [PARA] Destino [{dest_new}] <- Origem [{src_new}] {time_at} {time_new}",
         "log_routine_added": "ROTINA ADICIONADA (ID #{id} | UUID: {uuid}): Destino [{dest}] <- Origem [{src}] {time_at} {time} | Frequência: {freq}",
         "log_routine_deleted": "ROTINA REMOVIDA (ID #{id} | UUID: {uuid}): Destino [{dest}]",
@@ -180,6 +182,8 @@ LOCALES = {
         "log_time_at": "at",
 
         # Schedule Actions Logs
+        "err_http_switch": "HTTP ERROR {code} switching Destination [{dest:02d}] on Router [{ip}].",
+        "err_connection_switch": "CONNECTION FAILURE: KUMO Router [{ip}] unreachable on network! Error: {err}",
         "log_routine_updated": "ROUTINE UPDATED (ID #{id} | UUID: {uuid}): [FROM] Destination [{dest_old}] <- Source [{src_old}] {time_at} {time_old} | [TO] Destination [{dest_new}] <- Source [{src_new}] {time_at} {time_new}",
         "log_routine_added": "ROUTINE ADDED (ID #{id} | UUID: {uuid}): Destination [{dest}] <- Source [{src}] {time_at} {time} | Frequency: {freq}",
         "log_routine_deleted": "ROUTINE REMOVED (ID #{id} | UUID: {uuid}): Destination [{dest}]",
@@ -338,6 +342,8 @@ LOCALES = {
         "log_time_at": "a las",
 
         # Logs de Acciones
+        "err_http_switch": "ERROR HTTP {code} al conmutar Destino [{dest:02d}] en la Matriz [{ip}].",
+        "err_connection_switch": "FALLO DE CONEXIÓN: ¡Matriz KUMO [{ip}] unaccessible en la red! Error: {err}",
         "log_routine_updated": "RUTINA ACTUALIZADA (ID #{id} | UUID: {uuid}): [DE] Destino [{dest_old}] <- Origen [{src_old}] {time_at} {time_old} | [PARA] Destino [{dest_new}] <- Origen [{src_new}] {time_at} {time_new}",
         "log_routine_added": "RUTINA AGREGADA (ID #{id} | UUID: {uuid}): Destino [{dest}] <- Origen [{src}] {time_at} {time} | Frecuencia: {freq}",
         "log_routine_deleted": "RUTINA ELIMINADA (ID #{id} | UUID: {uuid}): Destino [{dest}]",
