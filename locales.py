@@ -4,8 +4,8 @@ import os
 LOCALES = {
     "pt_BR": {
         # Rótulos Padrão de Fábrica (Entradas / Saídas)
-        "default_input_label": "Origem {num}",
-        "default_output_label": "Destino {num}",
+        "default_input_label": "Origem {}",
+        "default_output_label": "Destino {}",
 
         # Logs do Sistema e Conexão
         "log_initialized": "AjaSchedule inicializado e operacional.",
@@ -162,8 +162,8 @@ LOCALES = {
     },
     "en_US": {
         # Factory Default Labels (Inputs / Outputs)
-        "default_input_label": "Source {num}",
-        "default_output_label": "Destination {num}",
+        "default_input_label": "Source {}",
+        "default_output_label": "Destination {}",
 
         # System Logs & Connection
         "log_initialized": "AjaSchedule initialized and operational.",
@@ -320,8 +320,8 @@ LOCALES = {
     },
     "es_ES": {
         # Etiquetas Por Defecto de Fábrica (Entradas / Salidas)
-        "default_input_label": "Origen {num}",
-        "default_output_label": "Destino {num}",
+        "default_input_label": "Origen {}",
+        "default_output_label": "Destino {}",
 
         # Logs del Sistema y Conexión
         "log_initialized": "AjaSchedule inicializado y operativo.",
