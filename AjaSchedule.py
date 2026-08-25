@@ -752,10 +752,30 @@ class AgendadorKumo64x64(tk.Tk):
         if destinos_raw is None:
             destinos_raw = DESTINOS_NOMES_DEFAULT
 
-        self.origens_nomes = self._normalizar_64_portas(origens_raw, "Origem")
-        self.destinos_nomes = self._normalizar_64_portas(
-            destinos_raw, "Destino"
-        )
+        # Normaliza e traduz dinamicamente as 64 portas de Entrada (Origens)
+        self.origens_nomes = {}
+        for i in range(1, 65):
+            # Garante a busca tanto por chave int quanto por string
+            nome_raw = origens_raw.get(i) or origens_raw.get(str(i), f"default_input_label:{i}")
+            
+            if isinstance(nome_raw, str) and nome_raw.startswith("default_input_label:"):
+                num = nome_raw.split(":")[1]
+                # Traduz dinamicamente usando a chave do locales.py (Origem X / Source X / Origen X)
+                self.origens_nomes[i] = self.tr("default_input_label").format(num)
+            else:
+                # Se o usuário já personalizou o nome (ex: "Câmera Studio A")
+                self.origens_nomes[i] = str(nome_raw)
+
+        # Normaliza e traduz dinamicamente as 64 portas de Saída (Destinos)
+        self.destinos_nomes = {}
+        for i in range(1, 65):
+            nome_raw = destinos_raw.get(i) or destinos_raw.get(str(i), f"default_output_label:{i}")
+            
+            if isinstance(nome_raw, str) and nome_raw.startswith("default_output_label:"):
+                num = nome_raw.split(":")[1]
+                self.destinos_nomes[i] = self.tr("default_output_label").format(num)
+            else:
+                self.destinos_nomes[i] = str(nome_raw)
 
     def salvar_labels(self):
         try:
@@ -2112,10 +2132,9 @@ class AgendadorKumo64x64(tk.Tk):
             mapeamento_indices.clear()
             termo = termo_busca.lower().strip()
 
-            for i in range(64):
-                num_porta = i + 1
-                nome = lista_dados[i]
-                string_exibicao = f"[{num_porta:02d}] {nome}"
+            for i in range(1, 65):
+                nome = lista_dados.get(i, f"Porta {i}")
+                string_exibicao = f"[{i:02d}] {nome}"
 
                 if not termo or termo in string_exibicao.lower():
                     listbox.insert(tk.END, string_exibicao)
