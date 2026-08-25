@@ -3,10 +3,14 @@ import os
 
 LOCALES = {
     "pt_BR": {
+        # Rótulos Padrão de Fábrica (Entradas / Saídas)
+        "default_input_label": "Origem {num}",
+        "default_output_label": "Destino {num}",
+
         # Logs do Sistema e Conexão
-        "log_initialized": "AjaSchedule 1.00 inicializado e operacional.",
+        "log_initialized": "AjaSchedule 1.04 inicializado e operacional.",
         "log_conn_failed": "[INICIALIZAÇÃO] FALHA DE CONEXÃO: Tempo limite esgotado (Timeout de 3s). Matriz KUMO no IP {ip} não respondeu.",
-        "log_init_app": "AjaSchedule 1.00 inicializado e operacional.",
+        "log_init_app": "AjaSchedule 1.04 inicializado e operacional.",
         "log_init_testing_conn": "[INICIALIZAÇÃO] Testando conexão com a Matriz KUMO ({ip})...",
         "log_init_conn_success": "[INICIALIZAÇÃO] CONEXÃO BEM-SUCEDIDA com a Matriz KUMO ({ip}) - Equipamento Online e Operacional.",
         "log_init_conn_status": "[INICIALIZAÇÃO] Matriz KUMO ({ip}) respondeu com Status HTTP {status}.",
@@ -91,6 +95,15 @@ LOCALES = {
         "day_friday": "Sexta-feira",
         "day_saturday": "Sábado",
         "day_sunday": "Domingo",
+
+        # Mapeamento Numérico dos Dias (Index 0-6)
+        "day_0": "Segunda-feira",
+        "day_1": "Terça-feira",
+        "day_2": "Quarta-feira",
+        "day_3": "Quinta-feira",
+        "day_4": "Sexta-feira",
+        "day_5": "Sábado",
+        "day_6": "Domingo",
         
         # Siglas dos Dias (Exibição Curta)
         "day_mon_short": "seg",
@@ -117,7 +130,7 @@ LOCALES = {
         "btn_remove_selected": "REMOVER SELECIONADO",
         "btn_edit_selected": "EDITAR SELECIONADO",
         "btn_run_now": "EXECUTAR SELECIONADO AGORA",
-        "footer_engineering_team": "Equipe de Engenharia - Sistema Jornal do Commercio Ltda",
+        "footer_engineering_team": "Desenvolvido por Gabriel Menge",
         
         # Aba Real-Time Monitoring
         "rt_panel_title": "PAINEL DE MONITORAÇÃO DE ROTINAS DA MATRIZ",
@@ -148,10 +161,14 @@ LOCALES = {
         "msg_label_updated_text": "Rótulo atualizado com sucesso!",
     },
     "en_US": {
+        # Factory Default Labels (Inputs / Outputs)
+        "default_input_label": "Source {num}",
+        "default_output_label": "Destination {num}",
+
         # System Logs & Connection
-        "log_initialized": "AjaSchedule 1.00 initialized and operational.",
+        "log_initialized": "AjaSchedule 1.04 initialized and operational.",
         "log_conn_failed": "[INITIALIZATION] CONNECTION FAILED: Timeout reached (3s Timeout). KUMO Matrix at IP {ip} did not respond.",
-        "log_init_app": "AjaSchedule 1.00 initialized and operational.",
+        "log_init_app": "AjaSchedule 1.04 initialized and operational.",
         "log_init_testing_conn": "[INITIALIZATION] Testing connection with KUMO Matrix ({ip})...",
         "log_init_conn_success": "[INITIALIZATION] CONNECTION SUCCESSFUL with KUMO Matrix ({ip}) - Device Online and Operational.",
         "log_init_conn_status": "[INITIALIZATION] KUMO Matrix ({ip}) responded with HTTP Status {status}.",
@@ -236,6 +253,15 @@ LOCALES = {
         "day_friday": "Friday",
         "day_saturday": "Saturday",
         "day_sunday": "Sunday",
+
+        # Numerical Days Mapping (Index 0-6)
+        "day_0": "Monday",
+        "day_1": "Tuesday",
+        "day_2": "Wednesday",
+        "day_3": "Thursday",
+        "day_4": "Friday",
+        "day_5": "Saturday",
+        "day_6": "Sunday",
         
         # Day Short Codes (Card Display)
         "day_mon_short": "Mon",
@@ -262,7 +288,7 @@ LOCALES = {
         "btn_remove_selected": "REMOVE SELECTED",
         "btn_edit_selected": "EDIT SELECTED",
         "btn_run_now": "RUN SELECTED NOW",
-        "footer_engineering_team": "Engineering Team - Sistema Jornal do Commercio Ltda",
+        "footer_engineering_team": "Created by Gabriel Menge",
         
         # Real-Time Monitoring Tab
         "rt_panel_title": "MATRIX ROUTINE MONITORING PANEL",
@@ -293,10 +319,14 @@ LOCALES = {
         "msg_label_updated_text": "Label updated successfully!",
     },
     "es_ES": {
+        # Etiquetas Por Defecto de Fábrica (Entradas / Salidas)
+        "default_input_label": "Origen {num}",
+        "default_output_label": "Destino {num}",
+
         # Logs del Sistema y Conexión
-        "log_initialized": "AjaSchedule 1.00 inicializado y operativo.",
+        "log_initialized": "AjaSchedule 1.04 inicializado y operativo.",
         "log_conn_failed": "[INICIALIZACIÓN] ERROR DE CONEXIÓN: Tiempo de espera agotado (Timeout 3s). Matriz KUMO en la IP {ip} no respondió.",
-        "log_init_app": "AjaSchedule 1.00 inicializado y operativo.",
+        "log_init_app": "AjaSchedule 1.04 inicializado y operativo.",
         "log_init_testing_conn": "[INICIALIZACIÓN] Probando conexión con la Matriz KUMO ({ip})...",
         "log_init_conn_success": "[INICIALIZACIÓN] CONEXIÓN EXITOSA con la Matriz KUMO ({ip}) - Equipo Online y Operativo.",
         "log_init_conn_status": "[INICIALIZACIÓN] Matriz KUMO ({ip}) respondió con Estado HTTP {status}.",
@@ -379,6 +409,16 @@ LOCALES = {
         "day_friday": "Viernes",
         "day_saturday": "Sábado",
         "day_sunday": "Domingo",
+
+        # Mapeo Numérico de Días (Index 0-6)
+        "day_0": "Lunes",
+        "day_1": "Martes",
+        "day_2": "Miércoles",
+        "day_3": "Jueves",
+        "day_4": "Viernes",
+        "day_5": "Sábado",
+        "day_6": "Domingo",
+        
         "day_mon_short": "lun",
         "day_tue_short": "mar",
         "day_wed_short": "mié",
@@ -403,7 +443,7 @@ LOCALES = {
         "btn_remove_selected": "ELIMINAR SELECCIONADO",
         "btn_edit_selected": "EDITAR SELECCIONADO",
         "btn_run_now": "EJECUTAR AHORA",
-        "footer_engineering_team": "Equipo de Ingeniería - Sistema Jornal do Commercio Ltda",
+        "footer_engineering_team": "Desenvolvido por Gabriel Menge",
         
         # Monitoreo
         "rt_panel_title": "PANEL DE MONITOREO DE RUTINAS DE LA MATRIZ",
@@ -463,6 +503,18 @@ class I18n:
 
 # Alias global para facilidade de chamada nos scripts: _("btn_confirm")
 _ = I18n.t
+
+
+def obter_nome_porta(valor_config: str) -> str:
+    """
+    Recebe a string salva no config.json (ex: 'default_input_label:1' ou 'Câmera Estúdio 1')
+    e devolve a tradução adequada ou o texto personalizado.
+    """
+    if valor_config and ":" in valor_config:
+        chave, num = valor_config.split(":", 1)
+        return _(chave, num=num)
+    
+    return valor_config
 
 
 def obter_ou_perguntar_idioma(app_instance=None, config_file="config.json") -> str:
