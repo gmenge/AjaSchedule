@@ -1,5 +1,5 @@
 # ==============================================================================
-# COPYRIGHT (C) 2026 SISTEMA JORNAL DO COMMERCIO LTDA
+# COPYRIGHT (C) 2026 B2 FIlmes
 # TODOS OS DIREITOS RESERVADOS.
 #
 # Autor: Gabriel Menge
@@ -15,15 +15,14 @@ import threading
 import time
 import tkinter as tk
 import uuid
-
-from tkinter import messagebox, simpledialog
 from datetime import datetime
-from tkinter import messagebox, ttk
-from locales import LOCALES
-from locales import I18n, LOCALES, obter_ou_perguntar_idioma  # ou o nome do seu arquivo de locales
-
+from tkinter import messagebox, simpledialog, ttk
+from locales import obter_nome_porta, _
 import requests
 from PIL import Image, ImageTk
+
+# Importa as estruturas de tradução e o gerenciador I18n
+from locales import I18n, LOCALES
 
 # Configuração de diretório de logs
 PASTA_LOGS = "logs"
@@ -44,7 +43,6 @@ logging.basicConfig(
 )
 
 logging.info("==================================================")
-logging.info("Inicializando AjaSchedule 1.04...")
 
 
 class GuiLogHandler(logging.Handler):
@@ -97,7 +95,7 @@ except ImportError:
         from config import MATRIX_IP
         KUMO_IP_DEFAULT = MATRIX_IP
     except ImportError:
-        KUMO_IP_DEFAULT = "172.17.100.100"
+        KUMO_IP_DEFAULT = "192.168.0.2"
 
 try:
     from componentes import HoverButton
@@ -139,15 +137,50 @@ def sanitizar_tempo(valor):
         return f"{num:02d}"
     return "00"
 
+def aplicar_icone(janela, nome_icone="logo.ico"):
+    """
+    Aplica o ícone na janela informada tratando o diretório dinâmico do PyInstaller.
+    """
+    try:
+        if hasattr(sys, "_MEIPASS"):
+            caminho_abs = os.path.join(sys._MEIPASS, nome_icone)
+        else:
+            caminho_abs = os.path.abspath(nome_icone)
+
+        if os.path.exists(caminho_abs):
+            janela.iconbitmap(caminho_abs)
+    except Exception as e:
+        logging.warning(f"Não foi possível aplicar o ícone: {e}")
+
+def definir_icone_padrao_global(caminho_icone="logo.ico"):
+    """
+    Define o ícone padrão para TODAS as janelas (Tk e Toplevel) criadas no aplicativo.
+    """
+    try:
+        if hasattr(sys, '_MEIPASS'):
+            caminho_abs = os.path.join(sys._MEIPASS, caminho_icone)
+        else:
+            caminho_abs = os.path.abspath(caminho_icone)
+
+        if os.path.exists(caminho_abs):
+            # Cria uma janela oculta temporária só para aplicar a regra global
+            root_temp = tk.Tk()
+            root_temp.withdraw()  # Esconde a janela imediatamente
+
+            if caminho_abs.lower().endswith(".ico"):
+                # O parâmetro default=True faz TODAS as janelas herdarem o ícone
+                root_temp.iconbitmap(default=caminho_abs)
+            else:
+                img = ImageTk.PhotoImage(Image.open(caminho_abs))
+                root_temp.iconphoto(True, img)  # True = aplica globalmente
+
+            root_temp.destroy()  # Destrói a janela temporária
+    except Exception as e:
+        logging.warning(f"Não foi possível aplicar o ícone global: {e}")
+
 def obter_ou_perguntar_idioma(arquivo_config="config.json"):
-    """
-    1. Tenta ler o idioma salvo no config.json.
-    2. Se não existir, abre uma janela independente e direta.
-    3. Salva a escolha e fecha a janela para o app principal rodar limpo.
-    """
     config_data = {}
 
-    # 1. Se já existe o config, retorna direto sem abrir NADA de interface
     if os.path.exists(arquivo_config):
         try:
             with open(arquivo_config, "r", encoding="utf-8") as f:
@@ -157,17 +190,18 @@ def obter_ou_perguntar_idioma(arquivo_config="config.json"):
         except Exception:
             pass
 
-    # 2. Se NÃO existe, cria uma janela Tk rápida e INDEPENDENTE
     root_lang = tk.Tk()
     root_lang.title("AjaSchedule - Language / Idioma")
     root_lang.geometry("450x190")
     root_lang.configure(bg="#1E1E1E")
     root_lang.resizable(False, False)
-
-    # Força a ficar na frente no Windows
+    
+    # Aplica o ícone e força o foco no topo
+    aplicar_icone(root_lang)
     root_lang.attributes("-topmost", True)
+    root_lang.lift()
+    root_lang.focus_force()
 
-    # Centraliza na tela
     root_lang.update_idletasks()
     largura, altura = 450, 190
     pos_x = (root_lang.winfo_screenwidth() // 2) - (largura // 2)
@@ -176,11 +210,7 @@ def obter_ou_perguntar_idioma(arquivo_config="config.json"):
 
     idioma_escolhido = ["pt_BR"]
 
-    def fechar_e_sair():
-        root_lang.destroy()
-        sys.exit(0)
-
-    root_lang.protocol("WM_DELETE_WINDOW", fechar_e_sair)
+    root_lang.protocol("WM_DELETE_WINDOW", root_lang.destroy)
 
     tk.Label(
         root_lang,
@@ -200,10 +230,9 @@ def obter_ou_perguntar_idioma(arquivo_config="config.json"):
         try:
             with open(arquivo_config, "w", encoding="utf-8") as f:
                 json.dump(config_data, f, indent=4)
-        except Exception as e:
+        except Exception:
             pass
-        
-        root_lang.destroy() # Fecha a janela de idioma e libera o código!
+        root_lang.destroy()
 
     HoverButton(
         frame_botoes, text="Português", font=("Arial", 9, "bold"),
@@ -223,14 +252,109 @@ def obter_ou_perguntar_idioma(arquivo_config="config.json"):
         padx=10, pady=8, command=lambda: selecionar("es_ES")
     ).pack(side="left", padx=5)
 
-    # Executa o loop exclusivo dessa janelinha
     root_lang.mainloop()
-
     return idioma_escolhido[0]
+
+def obter_ou_perguntar_ip_matriz(arquivo_config="config.json"):
+    config_data = {}
+
+    if os.path.exists(arquivo_config):
+        try:
+            with open(arquivo_config, "r", encoding="utf-8") as f:
+                config_data = json.load(f)
+                if "ip_matriz" in config_data and config_data["ip_matriz"].strip():
+                    return config_data["ip_matriz"]
+        except Exception:
+            pass
+
+    ip_padrao = getattr(sys.modules[__name__], "KUMO_IP_DEFAULT", "192.168.0.2")
+    ip_escolhido = [ip_padrao]
+
+    root_ip = tk.Tk()
+    root_ip.title(I18n.t("ip_title"))
+    root_ip.geometry("450x190")
+    root_ip.configure(bg="#1E1E1E")
+    root_ip.resizable(False, False)
+
+    # Aplica o ícone e força o foco no topo
+    aplicar_icone(root_ip)
+    root_ip.attributes("-topmost", True)
+    root_ip.lift()
+    root_ip.focus_force()
+
+    root_ip.update_idletasks()
+    largura, altura = 450, 190
+    pos_x = (root_ip.winfo_screenwidth() // 2) - (largura // 2)
+    pos_y = (root_ip.winfo_screenheight() // 2) - (altura // 2)
+    root_ip.geometry(f"{largura}x{altura}+{pos_x}+{pos_y}")
+
+    root_ip.protocol("WM_DELETE_WINDOW", root_ip.destroy)
+
+    lbl_instrucao = tk.Label(
+        root_ip, 
+        text=I18n.t("ip_instruction"), 
+        fg="#00E5FF", 
+        bg="#1E1E1E", 
+        font=("Arial", 11, "bold"),
+        pady=15
+    )
+    lbl_instrucao.pack()
+
+    entry_ip = tk.Entry(
+        root_ip, 
+        font=("Segoe UI", 11), 
+        bg="#2B2B2B",
+        fg="#00E5FF",
+        insertbackground="#FFFFFF",
+        bd=0,
+        highlightthickness=1,
+        highlightbackground="#444444",
+        justify="center", 
+        width=25
+    )
+    entry_ip.insert(0, ip_padrao)
+    entry_ip.pack(pady=5)
+    entry_ip.focus_set()
+    entry_ip.select_range(0, tk.END)
+
+    def salvar_ip():
+        valor = entry_ip.get().strip()
+        if not valor:
+            valor = ip_padrao
+
+        ip_escolhido[0] = valor
+        config_data["ip_matriz"] = valor
+
+        try:
+            with open(arquivo_config, "w", encoding="utf-8") as f:
+                json.dump(config_data, f, indent=4)
+        except Exception as e:
+            logging.error(f"Erro ao salvar IP: {e}")
+
+        root_ip.destroy()
+
+    btn_confirmar = HoverButton(
+        root_ip, 
+        text=I18n.t("btn_save_continue"), 
+        command=salvar_ip, 
+        bg_normal="#2B2B2B", 
+        bg_hover="#3E3E3E",
+        fg_normal="#FFFFFF", 
+        fg_hover="#00E5FF",
+        font=("Arial", 9, "bold"), 
+        padx=12, 
+        pady=6
+    )
+    btn_confirmar.pack(pady=12)
+
+    root_ip.bind("<Return>", lambda event: salvar_ip())
+    root_ip.mainloop()
+
+    return ip_escolhido[0]
 
 class AgendadorKumo64x64(tk.Tk):
 
-    def __init__(self, idioma_atual="en_US"):
+    def __init__(self, idioma_atual="en_US", ip_matriz=None):
         super().__init__()
 
         self.id_agendamento_em_edicao = None
@@ -252,9 +376,10 @@ class AgendadorKumo64x64(tk.Tk):
         self.minsize(1024, 680)
         self.configure(bg="#141414")
 
-        self.ip_matriz = KUMO_IP_DEFAULT
+        # Define o IP recebido da inicialização (se não vier nenhum, usa o padrão)
+        self.ip_matriz = ip_matriz if ip_matriz else KUMO_IP_DEFAULT
 
-        # Dispara a checagem de conexão com a matriz KUMO na inicialização
+        # Dispara a checagem de conexão com o IP configurado
         self.testar_conexao_inicial()
 
         self.config_frequencia = {
@@ -395,7 +520,9 @@ class AgendadorKumo64x64(tk.Tk):
         self.trocar_aba("agendar")
 
         threading.Thread(target=self.loop_agendador, daemon=True).start()
-        logging.info("AjaSchedule 1.04 inicializado e operacional.")
+        logging.info(self.tr("log_initialized"))
+
+        aplicar_icone(self)
 
     def tr(self, key, **kwargs):
         """Busca e traduz a chave com base no idioma ativo."""
@@ -637,6 +764,7 @@ class AgendadorKumo64x64(tk.Tk):
             frame_destinos, self.destinos_nomes, "Destino"
         )
 
+
     def carregar_labels(self):
         origens_raw = None
         destinos_raw = None
@@ -655,10 +783,17 @@ class AgendadorKumo64x64(tk.Tk):
         if destinos_raw is None:
             destinos_raw = DESTINOS_NOMES_DEFAULT
 
-        self.origens_nomes = self._normalizar_64_portas(origens_raw, "Origem")
-        self.destinos_nomes = self._normalizar_64_portas(
-            destinos_raw, "Destino"
-        )
+        # Normaliza e traduz dinamicamente as 64 portas de Entrada (Origens)
+        self.origens_nomes = {}
+        for i in range(1, 65):
+            nome_raw = origens_raw.get(i) or origens_raw.get(str(i), f"default_input_label:{i}")
+            self.origens_nomes[i] = obter_nome_porta(str(nome_raw))
+
+        # Normaliza e traduz dinamicamente as 64 portas de Saída (Destinos)
+        self.destinos_nomes = {}
+        for i in range(1, 65):
+            nome_raw = destinos_raw.get(i) or destinos_raw.get(str(i), f"default_output_label:{i}")
+            self.destinos_nomes[i] = obter_nome_porta(str(nome_raw))
 
     def salvar_labels(self):
         try:
@@ -740,7 +875,7 @@ class AgendadorKumo64x64(tk.Tk):
         if os.path.exists(caminho_logo):
             try:
                 img_pil = Image.open(caminho_logo)
-                img_pil.thumbnail((250, 80))
+                img_pil.thumbnail((280, 100))
                 self.img_logo = ImageTk.PhotoImage(img_pil)
             except Exception as e:
                 logging.error(f"Erro ao carregar imagem da logo: {e}")
@@ -858,7 +993,7 @@ class AgendadorKumo64x64(tk.Tk):
         else:
             lbl = tk.Label(
                 topo_frame,
-                text="AjaSchedule 1.04 - TV JORNAL",
+                text="AjaSchedule",
                 font=("Arial", 18, "bold"),
                 bg="#141414",
                 fg="#FFFFFF",
@@ -1160,10 +1295,22 @@ class AgendadorKumo64x64(tk.Tk):
         def callback_cancelar():
             self.resetar_formulario()
 
+        # ✅ Monta dinamicamente a lista com os labels atualizados (compatível com Dicionário e Lista)
+        if isinstance(getattr(self, "destinos_nomes", None), dict):
+            destinos_atualizados = [
+                f"[{port:02d}] {nome}"
+                for port, nome in sorted(self.destinos_nomes.items())
+            ]
+        else:
+            destinos_atualizados = [
+                f"[{i+1:02d}] {nome}"
+                for i, nome in enumerate(self.destinos_nomes)
+            ]
+
         SeletorCanalPopup(
             self,
             "destino",
-            self.destinos_combo,
+            destinos_atualizados,  # ✅ Passa a lista viva e atualizada
             callback_confirmar,
             callback_cancelar=callback_cancelar,
             valor_inicial=self.destino_selecionado
@@ -1178,10 +1325,22 @@ class AgendadorKumo64x64(tk.Tk):
         def callback_cancelar():
             self.resetar_formulario()
 
+        # ✅ Monta dinamicamente a lista com os labels atualizados (compatível com Dicionário e Lista)
+        if isinstance(getattr(self, "origens_nomes", None), dict):
+            origens_atualizadas = [
+                f"[{port:02d}] {nome}"
+                for port, nome in sorted(self.origens_nomes.items())
+            ]
+        else:
+            origens_atualizadas = [
+                f"[{i+1:02d}] {nome}"
+                for i, nome in enumerate(self.origens_nomes)
+            ]
+
         SeletorCanalPopup(
             self,
             "origem",
-            self.origens_combo,
+            origens_atualizadas,  # ✅ Passa a lista viva e atualizada
             callback_confirmar,
             callback_cancelar=callback_cancelar,
             valor_inicial=self.origem_selecionada
@@ -1196,7 +1355,6 @@ class AgendadorKumo64x64(tk.Tk):
         def callback_cancelar():
             self.resetar_formulario()
 
-        # --- CORREÇÃO MULTILÍNGUE (Usa as chaves padrão dos dias da semana) ---
         dias_todos = [
             self.tr("day_monday"),
             self.tr("day_tuesday"),
@@ -1207,8 +1365,7 @@ class AgendadorKumo64x64(tk.Tk):
             self.tr("day_sunday")
         ]
 
-        # Se for um novo cadastro e a frequência estiver vazia/zerada, marca todos os dias por padrão
-        if self.id_agendamento_em_edicao is None:
+        if getattr(self, "id_agendamento_em_edicao", None) is None:
             if not getattr(self, "config_frequencia", None) or not self.config_frequencia.get("dias"):
                 self.config_frequencia = {
                     "tipo": "recorrente",
@@ -1231,7 +1388,7 @@ class AgendadorKumo64x64(tk.Tk):
         def callback_cancelar():
             self.resetar_formulario()
 
-        val_sanitizado = sanitizar_tempo(self.hora_selecionada)
+        val_sanitizado = sanitizar_tempo(getattr(self, "hora_selecionada", "00"))
         valor_ini = f"{val_sanitizado} {self.tr('unit_hours_plural')}"
         horas_traduzidas = [f"{h:02d} {self.tr('unit_hours_plural')}" for h in range(24)]
 
@@ -1324,83 +1481,120 @@ class AgendadorKumo64x64(tk.Tk):
         return str(config_freq)
     
     def adicionar_agendamento(self):
-        # 1. Validação de seleção de Destino e Origem
-        if not self.destino_selecionado:
-            messagebox.showwarning(
-                self.tr("msg_select_item_title"), 
-                self.tr("placeholder_select_destination")
-            )
-            return
+        try:
+            # 1. Validação de seleção de Destino e Origem
+            if not getattr(self, "destino_selecionado", None):
+                messagebox.showwarning(
+                    self.tr("msg_select_item_title"), 
+                    self.tr("placeholder_select_destination")
+                )
+                return
 
-        if not self.origem_selecionada:
-            messagebox.showwarning(
-                self.tr("msg_select_item_title"), 
-                self.tr("placeholder_select_source")
-            )
-            return
+            if not getattr(self, "origem_selecionada", None):
+                messagebox.showwarning(
+                    self.tr("msg_select_item_title"), 
+                    self.tr("placeholder_select_source")
+                )
+                return
 
-        # 2. Validação de Horário e Frequência
-        if not getattr(self, "hora_selecionada", None) or not getattr(self, "minuto_selecionado", None):
-            messagebox.showwarning(
-                self.tr("msg_select_item_title"), 
-                self.tr("title_select_hour")
-            )
-            return
+            # 2. Validação de Horário e Frequência
+            if not getattr(self, "hora_selecionada", None) or not getattr(self, "minuto_selecionado", None):
+                messagebox.showwarning(
+                    self.tr("msg_select_item_title"), 
+                    self.tr("title_select_hour")
+                )
+                return
 
-        if not getattr(self, "config_frequencia", None):
-            messagebox.showwarning(
-                self.tr("msg_select_item_title"), 
-                self.tr("header_freq_routine")
-            )
-            return
+            if not getattr(self, "config_frequencia", None):
+                messagebox.showwarning(
+                    self.tr("msg_select_item_title"), 
+                    self.tr("header_freq_routine")
+                )
+                return
 
-        # 3. Extração dos índices numéricos de Destino e Origem
-        m_dest = re.search(r"\[(\d+)\]", self.destino_selecionado)
-        m_orig = re.search(r"\[(\d+)\]", self.origem_selecionada)
+            # 3. Extração dos índices numéricos de Destino e Origem
+            m_dest = re.search(r"\[(\d+)\]", self.destino_selecionado)
+            m_orig = re.search(r"\[(\d+)\]", self.origem_selecionada)
 
-        dest_num = int(m_dest.group(1)) if m_dest else 1
-        orig_num = int(m_orig.group(1)) if m_orig else 1
+            dest_num = int(m_dest.group(1)) if m_dest else 1
+            orig_num = int(m_orig.group(1)) if m_orig else 1
 
-        dest_nome = self.destinos_nomes[dest_num - 1]
-        orig_nome = self.origens_nomes[orig_num - 1]
+            # ✅ CORRIGIDO: Acesso direto por chave (1 a 64) no dicionário
+            dest_nome = self.destinos_nomes.get(dest_num, f"Destino {dest_num:02d}")
+            orig_nome = self.origens_nomes.get(orig_num, f"Origem {orig_num:02d}")
 
-        # 4. Formatação de tempo e frequência
-        hora_fmt = sanitizar_tempo(self.hora_selecionada)
-        minuto_fmt = sanitizar_tempo(self.minuto_selecionado)
-        horario = f"{hora_fmt}:{minuto_fmt}:00"
+            # 4. Formatação de tempo e frequência
+            hora_fmt = sanitizar_tempo(self.hora_selecionada)
+            minuto_fmt = sanitizar_tempo(self.minuto_selecionado)
+            horario = f"{hora_fmt}:{minuto_fmt}:00"
 
-        frequencia_fmt = self.formatar_texto_frequencia(self.config_frequencia)
+            frequencia_fmt = self.formatar_texto_frequencia(self.config_frequencia)
 
-        tipo_agendamento = self.config_frequencia.get("tipo", "recorrente")
-        dias_lista = self.config_frequencia.get("dias", []) if tipo_agendamento == "recorrente" else []
-        data_unica = self.config_frequencia.get("data", "") if tipo_agendamento == "unico" else ""
+            tipo_agendamento = self.config_frequencia.get("tipo", "recorrente")
+            dias_lista = self.config_frequencia.get("dias", []) if tipo_agendamento == "recorrente" else []
+            data_unica = self.config_frequencia.get("data", "") if tipo_agendamento == "unico" else ""
 
-        # Prepara string "às" / "at" / "a las" conforme o idioma
-        str_time_at = self.tr("log_time_at")
+            # Prepara string "às" / "at" / "a las" conforme o idioma
+            str_time_at = self.tr("log_time_at")
 
-        # 5. Fluxo de Edição ou Criação
-        if self.id_agendamento_em_edicao is not None:
-            item = next((a for a in self.agendamentos if a["id"] == self.id_agendamento_em_edicao), None)
-            if item:
-                # Dados anteriores
-                ant_dest = f"[{item['destino_num']:02d}] {item['destino_nome']}"
-                ant_orig = f"[{item['origem_num']:02d}] {item['origem_nome']}"
-                ant_freq = item.get("frequencia", "")
-                ant_hora = item.get("horario", "")
-                
-                time_old_str = f"{ant_freq} {ant_hora}"
+            # 5. Fluxo de Edição ou Criação
+            if getattr(self, "id_agendamento_em_edicao", None) is not None:
+                item = next((a for a in self.agendamentos if a["id"] == self.id_agendamento_em_edicao), None)
+                if item:
+                    # Dados anteriores
+                    ant_dest = f"[{item['destino_num']:02d}] {item['destino_nome']}"
+                    ant_orig = f"[{item['origem_num']:02d}] {item['origem_nome']}"
+                    ant_freq = item.get("frequencia", "")
+                    ant_hora = item.get("horario", "")
+                    
+                    time_old_str = f"{ant_freq} {ant_hora}"
 
-                # Novos dados
-                novo_dest = f"[{dest_num:02d}] {dest_nome}"
-                novo_orig = f"[{orig_num:02d}] {orig_nome}"
-                time_new_str = f"{frequencia_fmt} {horario}"
+                    # Novos dados
+                    novo_dest = f"[{dest_num:02d}] {dest_nome}"
+                    novo_orig = f"[{orig_num:02d}] {orig_nome}"
+                    time_new_str = f"{frequencia_fmt} {horario}"
 
-                if "uuid" not in item or not item["uuid"]:
-                    item["uuid"] = str(uuid.uuid4())
+                    if "uuid" not in item or not item["uuid"]:
+                        item["uuid"] = str(uuid.uuid4())
 
-                horario_mudou = item.get("horario") != horario or item.get("frequencia") != frequencia_fmt
+                    horario_mudou = item.get("horario") != horario or item.get("frequencia") != frequencia_fmt
 
-                item.update({
+                    item.update({
+                        "destino_num": dest_num,
+                        "destino_nome": dest_nome,
+                        "origem_num": orig_num,
+                        "origem_nome": orig_nome,
+                        "tipo": tipo_agendamento,
+                        "dias_lista": list(dias_lista),
+                        "data_unica": data_unica,
+                        "frequencia": frequencia_fmt,
+                        "horario": horario,
+                        "executado_hoje": False if horario_mudou else item.get("executado_hoje", False),
+                        "ultimo_dia_executado": "" if horario_mudou else item.get("ultimo_dia_executado", ""),
+                    })
+
+                    # Log de Atualização Traduzido
+                    msg_log = self.tr(
+                        "log_routine_updated",
+                        id=self.id_agendamento_em_edicao,
+                        uuid=item["uuid"][:8],
+                        dest_old=ant_dest,
+                        src_old=ant_orig,
+                        time_at=str_time_at,
+                        time_old=time_old_str,
+                        dest_new=novo_dest,
+                        src_new=novo_orig,
+                        time_new=time_new_str
+                    )
+                    logging.info(msg_log)
+            else:
+                # Criação de novo agendamento
+                item_id = max([a["id"] for a in self.agendamentos], default=0) + 1
+                item_uuid = str(uuid.uuid4())
+
+                item_data = {
+                    "id": item_id,
+                    "uuid": item_uuid,
                     "destino_num": dest_num,
                     "destino_nome": dest_nome,
                     "origem_num": orig_num,
@@ -1410,70 +1604,43 @@ class AgendadorKumo64x64(tk.Tk):
                     "data_unica": data_unica,
                     "frequencia": frequencia_fmt,
                     "horario": horario,
-                    "executado_hoje": False if horario_mudou else item.get("executado_hoje", False),
-                    "ultimo_dia_executado": "" if horario_mudou else item.get("ultimo_dia_executado", ""),
-                })
+                    "executado_hoje": False,
+                    "ultimo_dia_executado": "",
+                }
 
-                # Log de Atualização Traduzido (Mapeado exatamente com locales.py)
+                self.agendamentos.append(item_data)
+
+                # Log de Criação Traduzido
+                str_dest = f"[{dest_num:02d}] {dest_nome}"
+                str_orig = f"[{orig_num:02d}] {orig_nome}"
+
                 msg_log = self.tr(
-                    "log_routine_updated",
-                    id=self.id_agendamento_em_edicao,
-                    uuid=item["uuid"][:8],
-                    dest_old=ant_dest,
-                    src_old=ant_orig,
+                    "log_routine_added",
+                    id=item_id,
+                    uuid=item_uuid[:8],
+                    dest=str_dest,
+                    src=str_orig,
                     time_at=str_time_at,
-                    time_old=time_old_str,
-                    dest_new=novo_dest,
-                    src_new=novo_orig,
-                    time_new=time_new_str
+                    time=horario,
+                    freq=frequencia_fmt
                 )
                 logging.info(msg_log)
-        else:
-            # Criação de novo agendamento
-            item_id = max([a["id"] for a in self.agendamentos], default=0) + 1
-            item_uuid = str(uuid.uuid4())
 
-            item_data = {
-                "id": item_id,
-                "uuid": item_uuid,
-                "destino_num": dest_num,
-                "destino_nome": dest_nome,
-                "origem_num": orig_num,
-                "origem_nome": orig_nome,
-                "tipo": tipo_agendamento,
-                "dias_lista": list(dias_lista),
-                "data_unica": data_unica,
-                "frequencia": frequencia_fmt,
-                "horario": horario,
-                "executado_hoje": False,
-                "ultimo_dia_executado": "",
-            }
+            # 6. Finalização e persistência
+            self.salvar_agendamentos()
+            self.atualizar_tabela_e_agendamentos()
+            self.atualizar_painel_monitoramento()
+            self.resetar_formulario()
 
-            self.agendamentos.append(item_data)
-
-            # Log de Criação Traduzido (Mapeado exatamente com locales.py)
-            str_dest = f"[{dest_num:02d}] {dest_nome}"
-            str_orig = f"[{orig_num:02d}] {orig_nome}"
-
-            msg_log = self.tr(
-                "log_routine_added",
-                id=item_id,
-                uuid=item_uuid[:8],
-                dest=str_dest,
-                src=str_orig,
-                time_at=str_time_at,
-                time=horario,
-                freq=frequencia_fmt
-            )
-            logging.info(msg_log)
-
-        # 6. Finalização e persistência
-        self.salvar_agendamentos()
-        self.atualizar_tabela_e_agendamentos()
-        self.atualizar_painel_monitoramento()
-        self.resetar_formulario()
+        except Exception as e:
+            logging.error(f"Erro inesperado ao salvar agendamento: {e}", exc_info=True)
+            messagebox.showerror("Erro", f"Falha ao processar agendamento:\n{e}")
 
     def remover_agendamento(self, item_ids=None):
+        # ✅ Se for um evento enviado pelo Tkinter (.bind), ignora e trata como None
+        if hasattr(item_ids, "widget") or type(item_ids).__name__ == "Event":
+            item_ids = None
+
         str_time_at = self.tr("log_time_at")
 
         if item_ids is not None:
@@ -1872,22 +2039,37 @@ class AgendadorKumo64x64(tk.Tk):
             "DOM": "day_sun_short"
         }
 
+        # ✅ Atualização dos nomes de destino e origem nos agendamentos (compatível com Dicionário e Lista)
         for item in self.agendamentos:
-            d_idx = item["destino_num"] - 1
-            if d_idx < len(self.destinos_nomes):
-                item["destino_nome"] = self.destinos_nomes[d_idx]
+            d_num = item["destino_num"]
+            if isinstance(getattr(self, "destinos_nomes", None), dict):
+                item["destino_nome"] = self.destinos_nomes.get(
+                    d_num, f"{self.tr('label_destination')} {d_num:02d}"
+                )
             else:
-                item["destino_nome"] = f"{self.tr('label_destination')} {item['destino_num']:02d}"
+                d_idx = d_num - 1
+                if 0 <= d_idx < len(self.destinos_nomes):
+                    item["destino_nome"] = self.destinos_nomes[d_idx]
+                else:
+                    item["destino_nome"] = f"{self.tr('label_destination')} {d_num:02d}"
 
-            o_idx = item["origem_num"] - 1
-            if o_idx < len(self.origens_nomes):
-                item["origem_nome"] = self.origens_nomes[o_idx]
+            o_num = item["origem_num"]
+            if isinstance(getattr(self, "origens_nomes", None), dict):
+                item["origem_nome"] = self.origens_nomes.get(
+                    o_num, f"{self.tr('label_source')} {o_num:02d}"
+                )
             else:
-                item["origem_nome"] = f"{self.tr('label_source')} {item['origem_num']:02d}"
+                o_idx = o_num - 1
+                if 0 <= o_idx < len(self.origens_nomes):
+                    item["origem_nome"] = self.origens_nomes[o_idx]
+                else:
+                    item["origem_nome"] = f"{self.tr('label_source')} {o_num:02d}"
 
+        # Limpa elementos antigos da Treeview
         for child in self.tree.get_children():
             self.tree.delete(child)
 
+        # Popula a Treeview com os dados atualizados
         for item in self.agendamentos:
             if "uuid" not in item or not item["uuid"]:
                 item["uuid"] = str(uuid.uuid4())
@@ -2015,10 +2197,9 @@ class AgendadorKumo64x64(tk.Tk):
             mapeamento_indices.clear()
             termo = termo_busca.lower().strip()
 
-            for i in range(64):
-                num_porta = i + 1
-                nome = lista_dados[i]
-                string_exibicao = f"[{num_porta:02d}] {nome}"
+            for i in range(1, 65):
+                nome = lista_dados.get(i, f"Porta {i}")
+                string_exibicao = f"[{i:02d}] {nome}"
 
                 if not termo or termo in string_exibicao.lower():
                     listbox.insert(tk.END, string_exibicao)
@@ -2242,9 +2423,13 @@ class AgendadorKumo64x64(tk.Tk):
                     match = re.search(r'"value"\s*:\s*"(\d+)"', res_get.text)
                     if match:
                         orig_prev_num = int(match.group(1))
+                        
+                        # Ajustado para dicionários indexados de 1 a 64
                         nome_prev = (
-                            self.origens_nomes[orig_prev_num - 1] 
-                            if hasattr(self, "origens_nomes") and 0 < orig_prev_num <= len(self.origens_nomes) 
+                            self.origens_nomes.get(orig_prev_num)
+                            if isinstance(getattr(self, "origens_nomes", None), dict)
+                            else self.origens_nomes[orig_prev_num - 1]
+                            if hasattr(self, "origens_nomes") and 0 < orig_prev_num <= len(self.origens_nomes)
                             else f"{self.tr('label_source')} {orig_prev_num:02d}"
                         )
                         origem_anterior_str = f"[{orig_prev_num:02d}] {nome_prev}"
@@ -2286,13 +2471,22 @@ class AgendadorKumo64x64(tk.Tk):
                     if tipo_agendamento == "unico":
                         safe_after(0, lambda: self.remover_agendamento(item_id))
                 else:
-                    err_msg = f"ERRO HTTP {response.status_code} ao comutar Destino [{posicao_destino:02d}] na Matriz [{self.ip_matriz}]."
+                    # ✅ TRADUZIDO: Usando chaves do locales.py
+                    err_msg = self.tr("err_http_switch").format(
+                        code=response.status_code, 
+                        dest=posicao_destino, 
+                        ip=self.ip_matriz
+                    )
                     logging.error(err_msg)
                     safe_after(0, lambda: self.atualizar_status_tree(item_id, self.tr("status_server_error")))
                     safe_after(0, lambda: messagebox.showerror(self.tr("msg_matrix_failure"), err_msg))
 
             except requests.exceptions.RequestException as req_err:
-                err_msg = f"FALHA DE CONEXÃO: Matriz KUMO [{self.ip_matriz}] inacessível na rede! Erro: {req_err}"
+                # ✅ TRADUZIDO: Usando chaves do locales.py
+                err_msg = self.tr("err_connection_switch").format(
+                    ip=self.ip_matriz, 
+                    err=req_err
+                )
                 logging.error(err_msg)
                 safe_after(0, lambda: self.atualizar_status_tree(item_id, self.tr("status_connection_error")))
                 safe_after(0, lambda: messagebox.showerror(
@@ -2301,17 +2495,22 @@ class AgendadorKumo64x64(tk.Tk):
                 ))
 
         threading.Thread(target=worker, daemon=True).start()
-
-
+        
 if __name__ == "__main__":
+    # 0. Define o ícone global para TODAS as janelas (Popups e Principal)
+    definir_icone_padrao_global("logo.ico")  # Ajuste o nome do arquivo se necessário
+
     # 1. Obtém o idioma selecionado
     idioma_definido = obter_ou_perguntar_idioma()
 
-    # 2. Configura a instância estática de tradução
+    # 2. Configura a instância estática de tradução PRIMEIRO
     I18n.set_language(idioma_definido)
 
-    # 3. Inicializa o app principal
-    app = AgendadorKumo64x64(idioma_atual=idioma_definido)
+    # 3. Obtém ou pergunta o IP da Matriz (já traduzido para o idioma escolhido)
+    ip_matriz_definido = obter_ou_perguntar_ip_matriz()
+
+    # 4. Inicializa a aplicação principal com o IP definido (ou o default caso tenha fechado a popup)
+    app = AgendadorKumo64x64(idioma_atual=idioma_definido, ip_matriz=ip_matriz_definido)
 
     app.footer_label = tk.Label(
         app,

@@ -3,10 +3,21 @@ import os
 
 LOCALES = {
     "pt_BR": {
+        # Seleção IP Matriz
+        "ip_title": "AjaSchedule - Configuração de IP",
+        "ip_instruction": "Informe o IP do servidor da Matriz:",
+        "btn_save_continue": "Salvar e Continuar",
+        "ip_warning_empty": "O IP não pode ficar em branco!",
+        "warning_title": "Aviso",
+
+        # Rótulos Padrão de Fábrica (Entradas / Saídas)
+        "default_input_label": "Origem {num}",
+        "default_output_label": "Destino {num}",
+
         # Logs do Sistema e Conexão
-        "log_initialized": "AjaSchedule 1.04 inicializado e operacional.",
+        "log_initialized": "AjaSchedule inicializado e operacional.",
         "log_conn_failed": "[INICIALIZAÇÃO] FALHA DE CONEXÃO: Tempo limite esgotado (Timeout de 3s). Matriz KUMO no IP {ip} não respondeu.",
-        "log_init_app": "AjaSchedule 1.04 inicializado e operacional.",
+        "log_init_app": "AjaSchedule inicializado e operacional.",
         "log_init_testing_conn": "[INICIALIZAÇÃO] Testando conexão com a Matriz KUMO ({ip})...",
         "log_init_conn_success": "[INICIALIZAÇÃO] CONEXÃO BEM-SUCEDIDA com a Matriz KUMO ({ip}) - Equipamento Online e Operacional.",
         "log_init_conn_status": "[INICIALIZAÇÃO] Matriz KUMO ({ip}) respondeu com Status HTTP {status}.",
@@ -18,6 +29,8 @@ LOCALES = {
         "log_time_at": "às",
         
         # Logs de Ações de Agendamento
+        "err_http_switch": "ERRO HTTP {code} ao comutar Destino [{dest:02d}] na Matriz [{ip}].",
+        "err_connection_switch": "FALHA DE CONEXÃO: Matriz KUMO [{ip}] inacessível na rede! Erro: {err}",
         "log_routine_updated": "ROTINA ATUALIZADA (ID #{id} | UUID: {uuid}): [DE] Destino [{dest_old}] <- Origem [{src_old}] {time_at} {time_old} | [PARA] Destino [{dest_new}] <- Origem [{src_new}] {time_at} {time_new}",
         "log_routine_added": "ROTINA ADICIONADA (ID #{id} | UUID: {uuid}): Destino [{dest}] <- Origem [{src}] {time_at} {time} | Frequência: {freq}",
         "log_routine_deleted": "ROTINA REMOVIDA (ID #{id} | UUID: {uuid}): Destino [{dest}]",
@@ -91,6 +104,15 @@ LOCALES = {
         "day_friday": "Sexta-feira",
         "day_saturday": "Sábado",
         "day_sunday": "Domingo",
+
+        # Mapeamento Numérico dos Dias (Index 0-6)
+        "day_0": "Segunda-feira",
+        "day_1": "Terça-feira",
+        "day_2": "Quarta-feira",
+        "day_3": "Quinta-feira",
+        "day_4": "Sexta-feira",
+        "day_5": "Sábado",
+        "day_6": "Domingo",
         
         # Siglas dos Dias (Exibição Curta)
         "day_mon_short": "seg",
@@ -117,7 +139,7 @@ LOCALES = {
         "btn_remove_selected": "REMOVER SELECIONADO",
         "btn_edit_selected": "EDITAR SELECIONADO",
         "btn_run_now": "EXECUTAR SELECIONADO AGORA",
-        "footer_engineering_team": "Equipe de Engenharia - Sistema Jornal do Commercio Ltda",
+        "footer_engineering_team": "Desenvolvido por Gabriel Menge",
         
         # Aba Real-Time Monitoring
         "rt_panel_title": "PAINEL DE MONITORAÇÃO DE ROTINAS DA MATRIZ",
@@ -148,10 +170,21 @@ LOCALES = {
         "msg_label_updated_text": "Rótulo atualizado com sucesso!",
     },
     "en_US": {
+        # Matrix IP Selection
+        "ip_title": "AjaSchedule - IP Configuration",
+        "ip_instruction": "Enter the Matrix server IP address:",
+        "btn_save_continue": "Save & Continue",
+        "ip_warning_empty": "IP address cannot be empty!",
+        "warning_title": "Warning",
+
+        # Factory Default Labels (Inputs / Outputs)
+        "default_input_label": "Source {num}",
+        "default_output_label": "Destination {num}",
+
         # System Logs & Connection
-        "log_initialized": "AjaSchedule 1.04 initialized and operational.",
+        "log_initialized": "AjaSchedule initialized and operational.",
         "log_conn_failed": "[INITIALIZATION] CONNECTION FAILED: Timeout reached (3s Timeout). KUMO Matrix at IP {ip} did not respond.",
-        "log_init_app": "AjaSchedule 1.04 initialized and operational.",
+        "log_init_app": "AjaSchedule initialized and operational.",
         "log_init_testing_conn": "[INITIALIZATION] Testing connection with KUMO Matrix ({ip})...",
         "log_init_conn_success": "[INITIALIZATION] CONNECTION SUCCESSFUL with KUMO Matrix ({ip}) - Device Online and Operational.",
         "log_init_conn_status": "[INITIALIZATION] KUMO Matrix ({ip}) responded with HTTP Status {status}.",
@@ -163,6 +196,8 @@ LOCALES = {
         "log_time_at": "at",
 
         # Schedule Actions Logs
+        "err_http_switch": "HTTP ERROR {code} switching Destination [{dest:02d}] on Router [{ip}].",
+        "err_connection_switch": "CONNECTION FAILURE: KUMO Router [{ip}] unreachable on network! Error: {err}",
         "log_routine_updated": "ROUTINE UPDATED (ID #{id} | UUID: {uuid}): [FROM] Destination [{dest_old}] <- Source [{src_old}] {time_at} {time_old} | [TO] Destination [{dest_new}] <- Source [{src_new}] {time_at} {time_new}",
         "log_routine_added": "ROUTINE ADDED (ID #{id} | UUID: {uuid}): Destination [{dest}] <- Source [{src}] {time_at} {time} | Frequency: {freq}",
         "log_routine_deleted": "ROUTINE REMOVED (ID #{id} | UUID: {uuid}): Destination [{dest}]",
@@ -236,6 +271,15 @@ LOCALES = {
         "day_friday": "Friday",
         "day_saturday": "Saturday",
         "day_sunday": "Sunday",
+
+        # Numerical Days Mapping (Index 0-6)
+        "day_0": "Monday",
+        "day_1": "Tuesday",
+        "day_2": "Wednesday",
+        "day_3": "Thursday",
+        "day_4": "Friday",
+        "day_5": "Saturday",
+        "day_6": "Sunday",
         
         # Day Short Codes (Card Display)
         "day_mon_short": "Mon",
@@ -262,7 +306,7 @@ LOCALES = {
         "btn_remove_selected": "REMOVE SELECTED",
         "btn_edit_selected": "EDIT SELECTED",
         "btn_run_now": "RUN SELECTED NOW",
-        "footer_engineering_team": "Engineering Team - Sistema Jornal do Commercio Ltda",
+        "footer_engineering_team": "Created by Gabriel Menge",
         
         # Real-Time Monitoring Tab
         "rt_panel_title": "MATRIX ROUTINE MONITORING PANEL",
@@ -293,10 +337,21 @@ LOCALES = {
         "msg_label_updated_text": "Label updated successfully!",
     },
     "es_ES": {
+        # Selección de IP de Matriz
+        "ip_title": "AjaSchedule - Configuración de IP",
+        "ip_instruction": "Ingrese la IP del servidor de Matriz:",
+        "btn_save_continue": "Guardar y Continuar",
+        "ip_warning_empty": "¡La dirección IP no puede estar vacía!",
+        "warning_title": "Aviso",
+
+        # Etiquetas Por Defecto de Fábrica (Entradas / Salidas)
+        "default_input_label": "Origen {num}",
+        "default_output_label": "Destino {num}",
+
         # Logs del Sistema y Conexión
-        "log_initialized": "AjaSchedule 1.04 inicializado y operativo.",
+        "log_initialized": "AjaSchedule inicializado y operativo.",
         "log_conn_failed": "[INICIALIZACIÓN] ERROR DE CONEXIÓN: Tiempo de espera agotado (Timeout 3s). Matriz KUMO en la IP {ip} no respondió.",
-        "log_init_app": "AjaSchedule 1.04 inicializado y operativo.",
+        "log_init_app": "AjaSchedule inicializado y operativo.",
         "log_init_testing_conn": "[INICIALIZACIÓN] Probando conexión con la Matriz KUMO ({ip})...",
         "log_init_conn_success": "[INICIALIZACIÓN] CONEXIÓN EXITOSA con la Matriz KUMO ({ip}) - Equipo Online y Operativo.",
         "log_init_conn_status": "[INICIALIZACIÓN] Matriz KUMO ({ip}) respondió con Estado HTTP {status}.",
@@ -308,6 +363,8 @@ LOCALES = {
         "log_time_at": "a las",
 
         # Logs de Acciones
+        "err_http_switch": "ERROR HTTP {code} al conmutar Destino [{dest:02d}] en la Matriz [{ip}].",
+        "err_connection_switch": "FALLO DE CONEXIÓN: ¡Matriz KUMO [{ip}] inaccesible en la red! Error: {err}",
         "log_routine_updated": "RUTINA ACTUALIZADA (ID #{id} | UUID: {uuid}): [DE] Destino [{dest_old}] <- Origen [{src_old}] {time_at} {time_old} | [PARA] Destino [{dest_new}] <- Origen [{src_new}] {time_at} {time_new}",
         "log_routine_added": "RUTINA AGREGADA (ID #{id} | UUID: {uuid}): Destino [{dest}] <- Origen [{src}] {time_at} {time} | Frecuencia: {freq}",
         "log_routine_deleted": "RUTINA ELIMINADA (ID #{id} | UUID: {uuid}): Destino [{dest}]",
@@ -379,6 +436,16 @@ LOCALES = {
         "day_friday": "Viernes",
         "day_saturday": "Sábado",
         "day_sunday": "Domingo",
+
+        # Mapeo Numérico de Días (Index 0-6)
+        "day_0": "Lunes",
+        "day_1": "Martes",
+        "day_2": "Miércoles",
+        "day_3": "Jueves",
+        "day_4": "Viernes",
+        "day_5": "Sábado",
+        "day_6": "Domingo",
+        
         "day_mon_short": "lun",
         "day_tue_short": "mar",
         "day_wed_short": "mié",
@@ -403,7 +470,7 @@ LOCALES = {
         "btn_remove_selected": "ELIMINAR SELECCIONADO",
         "btn_edit_selected": "EDITAR SELECCIONADO",
         "btn_run_now": "EJECUTAR AHORA",
-        "footer_engineering_team": "Equipo de Ingeniería - Sistema Jornal do Commercio Ltda",
+        "footer_engineering_team": "Desarrollado por Gabriel Menge",
         
         # Monitoreo
         "rt_panel_title": "PANEL DE MONITOREO DE RUTINAS DE LA MATRIZ",
@@ -456,7 +523,7 @@ class I18n:
         if kwargs:
             try:
                 return text.format(**kwargs)
-            except KeyError:
+            except (KeyError, ValueError):
                 return text
         return text
 
@@ -465,80 +532,13 @@ class I18n:
 _ = I18n.t
 
 
-def obter_ou_perguntar_idioma(app_instance=None, config_file="config.json") -> str:
+def obter_nome_porta(valor_config: str) -> str:
     """
-    Recupera o idioma salvo no arquivo JSON.
-    Se não existir (1ª execução), exibe um popup Tkinter para escolha.
+    Recebe a string salva no config.json (ex: 'default_input_label:1' ou 'Câmera Estúdio 1')
+    e devolve a tradução adequada ou o texto personalizado.
     """
-    if os.path.exists(config_file):
-        try:
-            with open(config_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                lang = data.get("idioma")
-                if lang in LOCALES:
-                    I18n.set_language(lang)
-                    return lang
-        except Exception:
-            pass
-
-    # --- PRIMEIRA EXECUÇÃO: Pergunta via Janela GUI ---
-    import tkinter as tk
-    from tkinter import ttk
-
-    escolha = {"lang": "pt_BR"}  # Idioma padrão caso feche no 'X'
-
-    dialog = tk.Tk()
-    dialog.title("AjaSchedule - Select Language / Selecionar Idioma")
-    dialog.geometry("360x180")
-    dialog.resizable(False, False)
+    if valor_config and ":" in valor_config:
+        chave, num = valor_config.split(":", 1)
+        return _(chave, num=num)
     
-    # Força a janela a ficar visível e na frente de tudo
-    dialog.attributes("-topmost", True)
-    dialog.eval('tk::PlaceWindow . center')
-
-    tk.Label(
-        dialog, 
-        text="Selecione o Idioma / Select Language:", 
-        font=("Segoe UI", 10, "bold"),
-        pady=10
-    ).pack()
-
-    combo = ttk.Combobox(
-        dialog, 
-        values=["Português (pt_BR)", "English (en_US)", "Español (es_ES)"], 
-        state="readonly",
-        width=25
-    )
-    combo.current(0)
-    combo.pack(pady=5)
-
-    def confirmar():
-        sel = combo.get()
-        if "en_US" in sel:
-            escolha["lang"] = "en_US"
-        elif "es_ES" in sel:
-            escolha["lang"] = "es_ES"
-        else:
-            escolha["lang"] = "pt_BR"
-            
-        # Salva a escolha no config.json
-        try:
-            cfg = {}
-            if os.path.exists(config_file):
-                with open(config_file, "r", encoding="utf-8") as f:
-                    cfg = json.load(f)
-            cfg["idioma"] = escolha["lang"]
-            with open(config_file, "w", encoding="utf-8") as f:
-                json.dump(cfg, f, indent=4)
-        except Exception as e:
-            print(f"Erro ao salvar config: {e}")
-
-        dialog.destroy()
-
-    btn = tk.Button(dialog, text="OK / Confirmar", command=confirmar, width=15)
-    btn.pack(pady=15)
-
-    dialog.mainloop()
-
-    I18n.set_language(escolha["lang"])
-    return escolha["lang"]
+    return valor_config
