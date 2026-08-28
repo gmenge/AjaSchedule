@@ -45,6 +45,7 @@ LOCALES = {
         "log_time_at": "às",
         
         # Logs de Ações de Agendamento
+        "status_done_manual": "Executado manualmente",
         "err_http_switch": "Erro HTTP {code} ao comutar Destino [{dest:02d}].",
         "err_connection_switch": "Falha ao comutar: Matriz no IP {ip} inacessível.",
         "log_routine_updated": "Rotina atualizada: Destino [{dest_new}] <- Origem [{src_new}] {time_at} {time_new}",
@@ -227,6 +228,7 @@ LOCALES = {
         "log_time_at": "at",
 
         # Schedule Actions Logs
+        "status_done_manual": "Manually executed",
         "status_connection_error": "Connection Error",
         "err_http_switch": "HTTP Error {code} switching Destination [{dest:02d}].",
         "err_connection_switch": "Switch failed: Matrix at IP {ip} unreachable.",
@@ -410,6 +412,7 @@ LOCALES = {
         "log_time_at": "a las",
 
         # Logs de Acciones
+        "status_done_manual": "Ejecutado manualmente",
         "status_connection_error": "Error de Conexión",
         "err_http_switch": "Error HTTP {code} al conmutar Destino [{dest:02d}].",
         "err_connection_switch": "Fallo al conmutar: Matriz en la IP {ip} inaccesible.",

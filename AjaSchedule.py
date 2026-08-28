@@ -262,10 +262,12 @@ def obter_ou_perguntar_ip_matriz(arquivo_config="config.json"):
         try:
             with open(arquivo_config, "r", encoding="utf-8") as f:
                 config_data = json.load(f)
-                if "ip_matriz" in config_data and config_data["ip_matriz"].strip():
-                    return config_data["ip_matriz"]
-        except Exception:
-            pass
+                # Verifica ambas as chaves para garantir compatibilidade
+                ip_salvo = config_data.get("ip_matriz") or config_data.get("ip")
+                if ip_salvo and str(ip_salvo).strip():
+                    return str(ip_salvo).strip()
+        except Exception as e:
+            logging.error(f"Erro ao ler arquivo de configuracao: {e}")
 
     ip_padrao = getattr(sys.modules[__name__], "KUMO_IP_DEFAULT", "192.168.0.2")
     ip_escolhido = [ip_padrao]
@@ -1199,6 +1201,9 @@ class AgendadorKumo64x64(tk.Tk):
             "<Double-1>", lambda event: self.carregar_agendamento_para_edicao()
         )
 
+        self.tree.bind("<Delete>", lambda event: self.remover_agendamento())
+        self.tree.bind("<BackSpace>", lambda event: self.remover_agendamento())
+
         # RODAPÉ COM OS BOTÕES DE AÇÃO
         frame_botoes_acoes = tk.Frame(self.tab_agendador, bg="#141414")
         frame_botoes_acoes.pack(fill="x", padx=20, pady=(0, 15))
@@ -1513,13 +1518,12 @@ class AgendadorKumo64x64(tk.Tk):
                 return
 
             # 3. Extração dos índices numéricos de Destino e Origem
-            m_dest = re.search(r"\[(\d+)\]", self.destino_selecionado)
-            m_orig = re.search(r"\[(\d+)\]", self.origem_selecionada)
+            m_dest = re.search(r"\[(\d+)\]", str(self.destino_selecionado))
+            m_orig = re.search(r"\[(\d+)\]", str(self.origem_selecionada))
 
             dest_num = int(m_dest.group(1)) if m_dest else 1
             orig_num = int(m_orig.group(1)) if m_orig else 1
 
-            # ✅ CORRIGIDO: Acesso direto por chave (1 a 64) no dicionário
             dest_nome = self.destinos_nomes.get(dest_num, f"Destino {dest_num:02d}")
             orig_nome = self.origens_nomes.get(orig_num, f"Origem {orig_num:02d}")
 
@@ -1534,7 +1538,6 @@ class AgendadorKumo64x64(tk.Tk):
             dias_lista = self.config_frequencia.get("dias", []) if tipo_agendamento == "recorrente" else []
             data_unica = self.config_frequencia.get("data", "") if tipo_agendamento == "unico" else ""
 
-            # Prepara string "às" / "at" / "a las" conforme o idioma
             str_time_at = self.tr("log_time_at")
 
             # 5. Fluxo de Edição ou Criação
@@ -1573,20 +1576,23 @@ class AgendadorKumo64x64(tk.Tk):
                         "ultimo_dia_executado": "" if horario_mudou else item.get("ultimo_dia_executado", ""),
                     })
 
-                    # Log de Atualização Traduzido
-                    msg_log = self.tr(
-                        "log_routine_updated",
-                        id=self.id_agendamento_em_edicao,
-                        uuid=item["uuid"][:8],
-                        dest_old=ant_dest,
-                        src_old=ant_orig,
-                        time_at=str_time_at,
-                        time_old=time_old_str,
-                        dest_new=novo_dest,
-                        src_new=novo_orig,
-                        time_new=time_new_str
-                    )
-                    logging.info(msg_log)
+                    # Log de Atualização (Protegido contra exceções de formatação)
+                    try:
+                        msg_log = self.tr(
+                            "log_routine_updated",
+                            id=str(self.id_agendamento_em_edicao),
+                            uuid=str(item["uuid"])[:8],
+                            dest_old=ant_dest,
+                            src_old=ant_orig,
+                            time_at=str_time_at,
+                            time_old=time_old_str,
+                            dest_new=novo_dest,
+                            src_new=novo_orig,
+                            time_new=time_new_str
+                        )
+                        logging.info(msg_log)
+                    except Exception as log_err:
+                        logging.warning(f"Falha ao gerar log de edição: {log_err}")
             else:
                 # Criação de novo agendamento
                 item_id = max([a["id"] for a in self.agendamentos], default=0) + 1
@@ -1610,21 +1616,24 @@ class AgendadorKumo64x64(tk.Tk):
 
                 self.agendamentos.append(item_data)
 
-                # Log de Criação Traduzido
-                str_dest = f"[{dest_num:02d}] {dest_nome}"
-                str_orig = f"[{orig_num:02d}] {orig_nome}"
+                # Log de Criação (Protegido contra exceções de formatação)
+                try:
+                    str_dest = f"[{dest_num:02d}] {dest_nome}"
+                    str_orig = f"[{orig_num:02d}] {orig_nome}"
 
-                msg_log = self.tr(
-                    "log_routine_added",
-                    id=item_id,
-                    uuid=item_uuid[:8],
-                    dest=str_dest,
-                    src=str_orig,
-                    time_at=str_time_at,
-                    time=horario,
-                    freq=frequencia_fmt
-                )
-                logging.info(msg_log)
+                    msg_log = self.tr(
+                        "log_routine_added",
+                        id=str(item_id),
+                        uuid=str(item_uuid)[:8],
+                        dest=str_dest,
+                        src=str_orig,
+                        time_at=str_time_at,
+                        time=horario,
+                        freq=frequencia_fmt
+                    )
+                    logging.info(msg_log)
+                except Exception as log_err:
+                    logging.warning(f"Falha ao gerar log de criação: {log_err}")
 
             # 6. Finalização e persistência
             self.salvar_agendamentos()
@@ -1634,24 +1643,29 @@ class AgendadorKumo64x64(tk.Tk):
 
         except Exception as e:
             logging.error(f"Erro inesperado ao salvar agendamento: {e}", exc_info=True)
-            messagebox.showerror("Erro", f"Falha ao processar agendamento:\n{e}")
+            messagebox.showerror(
+                self.tr("titulo_erro") if hasattr(self, "tr") else "Erro", 
+                f"Falha ao processar agendamento:\n{type(e).__name__}: {e}"
+            )
 
     def remover_agendamento(self, item_ids=None):
-        # ✅ Se for um evento enviado pelo Tkinter (.bind), ignora e trata como None
+        # Se for um evento enviado pelo Tkinter (.bind do teclado), ignora o objeto Event
         if hasattr(item_ids, "widget") or type(item_ids).__name__ == "Event":
             item_ids = None
 
         str_time_at = self.tr("log_time_at")
 
+        # =========================================================================
+        # CASO 1: Remoção direta via código (ex: passando ID, UUID ou lista deles)
+        # =========================================================================
         if item_ids is not None:
-            # Remoção direta (ex: eventos únicos pós-execução). Aceita int (ID), str (UUID) ou lista de ambos.
             if isinstance(item_ids, (int, str)):
                 item_ids = [item_ids]
 
             for id_ou_uuid in item_ids:
                 # Procura o item tanto por ID numérico quanto por UUID
                 item_removido = next(
-                    (a for a in self.agendamentos if a.get("id") == id_ou_uuid or a.get("uuid") == id_ou_uuid),
+                    (a for a in self.agendamentos if str(a.get("id")) == str(id_ou_uuid) or str(a.get("uuid")) == str(id_ou_uuid)),
                     None
                 )
                 if item_removido:
@@ -1659,22 +1673,25 @@ class AgendadorKumo64x64(tk.Tk):
                     str_dest = f"[{item_removido['destino_num']:02d}] {item_removido['destino_nome']}"
                     str_orig = f"[{item_removido['origem_num']:02d}] {item_removido['origem_nome']}"
 
-                    msg_log = self.tr(
-                        "log_single_event_removed",
-                        id=item_removido['id'],
-                        uuid=target_uuid[:8],
-                        dest=str_dest,
-                        src=str_orig,
-                        time_at=str_time_at,
-                        time=item_removido['horario'],
-                        freq=item_removido['frequencia']
-                    )
-                    logging.info(msg_log)
+                    try:
+                        msg_log = self.tr(
+                            "log_single_event_removed",
+                            id=str(item_removido['id']),
+                            uuid=str(target_uuid[:8]),
+                            dest=str_dest,
+                            src=str_orig,
+                            time_at=str_time_at,
+                            time=item_removido['horario'],
+                            freq=item_removido['frequencia']
+                        )
+                        logging.info(msg_log)
+                    except Exception as log_err:
+                        logging.warning(f"Falha ao gerar log de remoção: {log_err}")
 
-                    # Exclui usando estritamente a chave UUID única
+                    # Exclui usando estritamente o UUID único
                     self.agendamentos = [a for a in self.agendamentos if a.get("uuid") != target_uuid]
 
-            # Reordena a numeração visual sequencial (1, 2, 3...) dos itens restantes
+            # Reordena a numeração visual sequencial (1, 2, 3...)
             for idx, item in enumerate(self.agendamentos, start=1):
                 item["id"] = idx
 
@@ -1683,6 +1700,9 @@ class AgendadorKumo64x64(tk.Tk):
             self.atualizar_painel_monitoramento()
             return
 
+        # =========================================================================
+        # CASO 2: Remoção via Seleção da Interface (Botão "Excluir" ou tecla Delete)
+        # =========================================================================
         selected_items = self.tree.selection()
         if not selected_items:
             messagebox.showwarning(
@@ -1695,44 +1715,61 @@ class AgendadorKumo64x64(tk.Tk):
         ultimo_selecionado = selected_items[-1]
         idx_ultimo = todos_itens.index(ultimo_selecionado)
 
+        uuids_para_remover = set()
+
         for sel in selected_items:
             item_values = self.tree.item(sel, "values")
-            item_id_visual = int(item_values[0])
+            if not item_values:
+                continue
+        
+            try:
+                item_id_visual = int(item_values[0])
+            except (ValueError, IndexError):
+                continue
 
-            # Localiza o registro correspondente ao ID visual selecionado na Treeview
-            item_removido = next((a for a in self.agendamentos if a["id"] == item_id_visual), None)
+            # Localiza o registro correspondente ao ID visual
+            item_removido = next((a for a in self.agendamentos if a.get("id") == item_id_visual), None)
             if item_removido:
                 target_uuid = item_removido.get("uuid", "")
+                if target_uuid:
+                    uuids_para_remover.add(target_uuid)
+
                 str_dest = f"[{item_removido['destino_num']:02d}] {item_removido['destino_nome']}"
                 str_orig = f"[{item_removido['origem_num']:02d}] {item_removido['origem_nome']}"
 
-                msg_log = self.tr(
-                    "log_routine_removed",
-                    id=item_id_visual,
-                    uuid=target_uuid[:8],
-                    dest=str_dest,
-                    src=str_orig,
-                    time_at=str_time_at,
-                    time=item_removido['horario'],
-                    freq=item_removido['frequencia']
-                )
-                logging.info(msg_log)
+                try:
+                    msg_log = self.tr(
+                        "log_routine_removed",
+                        id=str(item_id_visual),
+                        uuid=str(target_uuid[:8]),
+                        dest=str_dest,
+                        src=str_orig,
+                        time_at=str_time_at,
+                        time=item_removido['horario'],
+                        freq=item_removido['frequencia']
+                    )
+                    logging.info(msg_log)
+                except Exception as log_err:
+                    logging.warning(f"Falha ao gerar log de remoção: {log_err}")
 
-                # Remove da memória pelo UUID real
-                self.agendamentos = [a for a in self.agendamentos if a.get("uuid") != target_uuid]
+        # Remove todos os selecionados da memória de uma só vez pelo UUID
+        if uuids_para_remover:
+            self.agendamentos = [a for a in self.agendamentos if a.get("uuid") not in uuids_para_remover]
 
-        # Reordena os IDs numéricos visuais após a exclusão dos selecionados
+        # Reordena os IDs numéricos visuais após a exclusão
         for idx, item in enumerate(self.agendamentos, start=1):
             item["id"] = idx
 
+        # Salva e recria os itens visuais da Treeview
         self.salvar_agendamentos()
-        self.atualizar_tabela_e_agendamentos() # Atualiza a Treeview com os IDs visuais renovados
+        self.atualizar_tabela_e_agendamentos()
         self.atualizar_painel_monitoramento()
 
-        itens_restantes = self.tree.get_children()
-        if itens_restantes:
-            novo_idx = min(idx_ultimo, len(itens_restantes) - 1)
-            proximo_item = itens_restantes[novo_idx]
+        # Seleciona o próximo item disponível após a reconstrução da tabela
+        novos_itens_restantes = self.tree.get_children()
+        if novos_itens_restantes:
+            novo_idx = max(0, min(idx_ultimo, len(novos_itens_restantes) - 1))
+            proximo_item = novos_itens_restantes[novo_idx]
 
             self.tree.selection_set(proximo_item)
             self.tree.focus(proximo_item)
@@ -1903,72 +1940,110 @@ class AgendadorKumo64x64(tk.Tk):
         return freq_str_clean
 
     def atualizar_painel_monitoramento(self):
-        for widget in self.container_cards.winfo_children():
-            widget.destroy()
+        try:
+            for widget in self.container_cards.winfo_children():
+                widget.destroy()
 
-        destinos_agendados = {}
-        for item in self.agendamentos:
-            d_num = item["destino_num"]
-            if d_num not in destinos_agendados:
-                destinos_agendados[d_num] = []
-            destinos_agendados[d_num].append(item)
+            destinos_agendados = {}
+            for item in self.agendamentos:
+                d_num = item.get("destino_num", 1)
+                if d_num not in destinos_agendados:
+                    destinos_agendados[d_num] = []
+                destinos_agendados[d_num].append(item)
 
-        if not destinos_agendados:
-            lbl_vazio = tk.Label(
-                self.container_cards,
-                text=self.tr("rt_no_schedules_msg"),
-                font=("Arial", 13, "italic"),
-                fg="#888888",
-                bg="#141414",
-                pady=20,
-            )
-            lbl_vazio.pack()
-            return
+            if not destinos_agendados:
+                try:
+                    texto_vazio = self.tr("rt_no_schedules_msg")
+                except Exception:
+                    texto_vazio = "Nenhum agendamento cadastrado"
 
-        col = 0
-        row = 0
-        hoje_str = time.strftime("%Y-%m-%d")
-
-        for d_num, agendados in destinos_agendados.items():
-            nome_dest = self.destinos_nomes[d_num - 1]
-            prefixo_dest = self.tr("rt_destination_prefix")
-            
-            card = tk.LabelFrame(
-                self.container_cards,
-                text=f" {prefixo_dest} [{d_num:02d}] {nome_dest} ",
-                font=("Arial", 12, "bold"),
-                fg="#00E5FF",
-                bg="#2B2B2B",
-                bd=0,
-                padx=12,
-                pady=12,
-            )
-            card.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
-            self._bind_mousewheel_area(card)
-
-            for a in agendados:
-                foi_hoje = a["ultimo_dia_executado"] == hoje_str
-                status_color = "#00FF66" if foi_hoje else "#FFCC00"
-                status_txt = self.tr("rt_status_executed") if foi_hoje else self.tr("rt_status_waiting")
-
-                freq_exibicao = self._formatar_frequencia_exibicao(a['frequencia'])
-
-                txt_evento = f"• [{freq_exibicao}] {a['horario']} -> [{a['origem_num']:02d}] {a['origem_nome']} ({status_txt})"
-                lbl_ev = tk.Label(
-                    card,
-                    text=txt_evento,
-                    font=("Arial", 11, "bold"),
-                    fg=status_color,
-                    bg="#2B2B2B",
-                    anchor="w",
+                lbl_vazio = tk.Label(
+                    self.container_cards,
+                    text=texto_vazio,
+                    font=("Arial", 13, "italic"),
+                    fg="#888888",
+                    bg="#141414",
+                    pady=20,
                 )
-                lbl_ev.pack(fill="x", pady=2)
-                self._bind_mousewheel_area(lbl_ev)
+                lbl_vazio.pack()
+                return
 
-            col += 1
-            if col > 2:
-                col = 0
-                row += 1
+            col = 0
+            row = 0
+            hoje_str = time.strftime("%Y-%m-%d")
+
+            for d_num, agendados in destinos_agendados.items():
+                # Busca segura do nome do destino (funciona para dict ou list)
+                nome_dest = ""
+                if hasattr(self, "destinos_nomes") and self.destinos_nomes:
+                    if isinstance(self.destinos_nomes, dict):
+                        nome_dest = self.destinos_nomes.get(d_num, self.destinos_nomes.get(d_num - 1, ""))
+                    elif isinstance(self.destinos_nomes, (list, tuple)):
+                        idx = d_num - 1 if d_num > 0 else 0
+                        if 0 <= idx < len(self.destinos_nomes):
+                            nome_dest = self.destinos_nomes[idx]
+
+                if not nome_dest:
+                    nome_dest = f"Destino {d_num:02d}"
+
+                # Tradução segura do prefixo
+                try:
+                    prefixo_dest = self.tr("rt_destination_prefix")
+                except Exception:
+                    prefixo_dest = "Destino"
+
+                card = tk.LabelFrame(
+                    self.container_cards,
+                    text=f" {prefixo_dest} [{d_num:02d}] {nome_dest} ",
+                    font=("Arial", 12, "bold"),
+                    fg="#00E5FF",
+                    bg="#2B2B2B",
+                    bd=0,
+                    padx=12,
+                    pady=12,
+                )
+                card.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
+                self._bind_mousewheel_area(card)
+
+                for a in agendados:
+                    foi_hoje = a.get("ultimo_dia_executado", "") == hoje_str
+                    status_color = "#00FF66" if foi_hoje else "#FFCC00"
+
+                    # Traduções seguras dos status
+                    try:
+                        status_txt = self.tr("rt_status_executed") if foi_hoje else self.tr("rt_status_waiting")
+                    except Exception:
+                        status_txt = "Executado" if foi_hoje else "Aguardando"
+
+                    freq_raw = a.get("frequencia", "")
+                    try:
+                        freq_exibicao = self._formatar_frequencia_exibicao(freq_raw)
+                    except Exception:
+                        freq_exibicao = freq_raw
+
+                    orig_num = a.get("origem_num", 1)
+                    orig_nome = a.get("origem_nome", f"Origem {orig_num:02d}")
+                    horario = a.get("horario", "--:--:--")
+
+                    txt_evento = f"• [{freq_exibicao}] {horario} -> [{orig_num:02d}] {orig_nome} ({status_txt})"
+                    lbl_ev = tk.Label(
+                        card,
+                        text=txt_evento,
+                        font=("Arial", 11, "bold"),
+                        fg=status_color,
+                        bg="#2B2B2B",
+                        anchor="w",
+                    )
+                    lbl_ev.pack(fill="x", pady=2)
+                    self._bind_mousewheel_area(lbl_ev)
+
+                col += 1
+                if col > 2:
+                    col = 0
+                    row += 1
+
+        except Exception as e:
+            logging.error(f"Erro ao atualizar painel de monitoramento: {e}", exc_info=True)
 
     def criar_aba_logs(self):
         """Cria e conecta a caixa de logs na interface de maneira segura."""
