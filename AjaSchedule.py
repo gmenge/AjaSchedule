@@ -2213,10 +2213,15 @@ class AgendadorKumo64x64(tk.Tk):
         entry_filtro.bind("<KeyRelease>", ao_digitar_filtro)
 
         def abrir_janela_edicao():
+            # Define o nome legível conforme o tipo (Destino / Origem) usando as chaves corretas do locales: 'lbl_destination' e 'lbl_source'
+            if tipo.lower() in ("destino", "destination", "output"):
+                titulo_tipo = self.tr("lbl_destination").rstrip(":")
+            else:
+                titulo_tipo = self.tr("lbl_source").rstrip(":")
+
             selecao = listbox.curselection()
             if not selecao:
-                tipo_str = self.tr("label_destination") if tipo.lower() in ("destino", "destination") else self.tr("label_source")
-                msg_aviso = f"{self.tr('msg_select_item_edit')} ({tipo_str})"
+                msg_aviso = f"{self.tr('msg_select_item_edit')} ({titulo_tipo})"
                 messagebox.showwarning(self.tr("msg_select_item_title"), msg_aviso)
                 return
 
@@ -2224,12 +2229,6 @@ class AgendadorKumo64x64(tk.Tk):
             idx_real = mapeamento_indices[idx_filtrado]
             num_porta = idx_real + 1
             nome_atual = lista_dados[idx_real]
-
-            # Define o título conforme o tipo (Destino / Origem)
-            if tipo.lower() in ("destino", "destination"):
-                titulo_tipo = self.tr("label_destination")
-            else:
-                titulo_tipo = self.tr("label_source")
 
             pop = tk.Toplevel(self)
             pop.title(f"{self.tr('btn_edit_selected')} - {titulo_tipo} [{num_porta:02d}]")
@@ -2268,7 +2267,7 @@ class AgendadorKumo64x64(tk.Tk):
             entry_novo_nome.select_range(0, tk.END)
             entry_novo_nome.focus_set()
 
-            def confirmar():
+            def confirmar(event=None):
                 novo_nome = entry_novo_nome.get().strip()
                 if novo_nome.startswith("[") and "]" in novo_nome:
                     novo_nome = novo_nome.split("]", 1)[1].strip()
@@ -2286,6 +2285,9 @@ class AgendadorKumo64x64(tk.Tk):
                 
                 pop.destroy()
 
+            def fechar_popup(event=None):
+                pop.destroy()
+
             btn_confirmar = HoverButton(
                 pop,
                 text=self.tr("btn_save_changes"),
@@ -2300,7 +2302,13 @@ class AgendadorKumo64x64(tk.Tk):
             )
             btn_confirmar.pack(pady=10)
 
-            entry_novo_nome.bind("<Return>", lambda e: confirmar())
+            # ATALHOS DE TECLADO:
+            # Fechar ao pressionar ESC
+            pop.bind("<Escape>", fechar_popup)
+            
+            # Confirmar ao pressionar ENTER (no Entry ou na janela toda)
+            entry_novo_nome.bind("<Return>", confirmar)
+            pop.bind("<Return>", confirmar)
 
         btn_editar.config(command=abrir_janela_edicao)
         listbox.bind("<Double-Button-1>", lambda e: abrir_janela_edicao())
@@ -2312,21 +2320,25 @@ class AgendadorKumo64x64(tk.Tk):
 
         if not re.match(padrao_ip, novo_ip):
             messagebox.showerror(
-                self.tr("msg_invalid_ip_title"),
-                self.tr("msg_invalid_ip_text"),
+                _("msg_invalid_ip_title"),
+                _("msg_invalid_ip_text")
             )
             return
 
         ip_anterior = self.ip_matriz
         self.ip_matriz = novo_ip
-        self.lbl_status_ip.config(text=f"{self.tr('lbl_current_ip')} {self.ip_matriz}")
+    
+        # Exemplo formatado usando a função de tradução
+        self.lbl_status_ip.config(text=f"{_('lbl_current_ip')} {self.ip_matriz}")
 
-        log_msg = self.tr("log_ip_changed").format(old=ip_anterior, new=self.ip_matriz)
+        # Tradução com interpolação de variáveis ({old} e {new})
+        log_msg = _("log_ip_changed", old=ip_anterior, new=self.ip_matriz)
         logging.info(log_msg)
 
-        msg_sucesso = f"{self.tr('msg_ip_updated_success')}\n{self.tr('lbl_current_ip')} {self.ip_matriz}"
+        msg_sucesso = f"{_('msg_ip_updated_success')}\n{_('lbl_current_ip')} {self.ip_matriz}"
         messagebox.showinfo(
-            self.tr("msg_success_title"), msg_sucesso
+            _("msg_success_title"), 
+            msg_sucesso
         )
 
     def loop_agendador(self):

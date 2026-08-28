@@ -10,33 +10,45 @@ LOCALES = {
         "ip_warning_empty": "O IP não pode ficar em branco!",
         "warning_title": "Aviso",
 
+        # Validação e Alteração de IP
+        "lbl_source_single": "Origem",
+        "lbl_destination_single": "Destino",
+        "title_edit_selected": "EDITAR SELEÇÃO - {type} [{num:02d}]",
+        "msg_select_item_edit_type": "Por favor, selecione um agendamento na lista para editar.",
+        "msg_invalid_ip_title": "IP Inválido",
+        "msg_invalid_ip_text": "O endereço IP informado é inválido. Por favor, verifique e tente novamente.",
+        "msg_ip_updated_success": "Endereço IP da Matriz atualizado com sucesso!",
+        "msg_success_title": "Sucesso",
+        "lbl_current_ip": "IP Atual:",
+        "log_ip_changed": "IP da Matriz alterado para {new}",
+
         # Rótulos Padrão de Fábrica (Entradas / Saídas)
         "default_input_label": "Origem {num}",
         "default_output_label": "Destino {num}",
 
         # Logs do Sistema e Conexão
-        "log_initialized": "AjaSchedule inicializado e operacional.",
-        "log_conn_failed": "[INICIALIZAÇÃO] FALHA DE CONEXÃO: Tempo limite esgotado (Timeout de 3s). Matriz KUMO no IP {ip} não respondeu.",
-        "log_init_app": "AjaSchedule inicializado e operacional.",
-        "log_init_testing_conn": "[INICIALIZAÇÃO] Testando conexão com a Matriz KUMO ({ip})...",
-        "log_init_conn_success": "[INICIALIZAÇÃO] CONEXÃO BEM-SUCEDIDA com a Matriz KUMO ({ip}) - Equipamento Online e Operacional.",
-        "log_init_conn_status": "[INICIALIZAÇÃO] Matriz KUMO ({ip}) respondeu com Status HTTP {status}.",
-        "log_init_conn_timeout": "[INICIALIZAÇÃO] FALHA DE CONEXÃO: Tempo limite esgotado (Timeout de 3s). Matriz KUMO no IP {ip} não respondeu.",
-        "log_init_conn_failed": "[INICIALIZAÇÃO] FALHA DE CONEXÃO: Matriz KUMO ({ip}) inacessível. Erro: {err}",
-        "log_save_agendamentos_failed": "Falha ao salvar agendamentos no disco: {err}",
-        "log_status_check_failed": "Não foi possível consultar estado prévio do Destino [{dest}]: {err}",
-        "log_conn_unreachable": "FALHA DE CONEXÃO: Matriz KUMO [{ip}] inacessível na rede! Erro: {err}",
+        "log_initialized": "Sistema inicializado.",
+        "log_conn_failed": "Falha ao conectar com a Matriz no IP {ip}.",
+        "log_init_app": "Sistema inicializado e pronto.",
+        "log_init_testing_conn": "Testando conexão com a Matriz no IP {ip}...",
+        "log_init_conn_success": "Conectado com sucesso à Matriz ({ip}).",
+        "log_init_conn_status": "Resposta da Matriz ({ip}): Status HTTP {status}.",
+        "log_init_conn_timeout": "Tempo limite de conexão esgotado no IP {ip}.",
+        "log_init_conn_failed": "Falha de rede ao conectar na Matriz no IP {ip}.",
+        "log_save_agendamentos_failed": "Falha ao salvar agendamentos.",
+        "log_status_check_failed": "Falha ao consultar estado do Destino [{dest}].",
+        "log_conn_unreachable": "Matriz no IP {ip} está inacessível na rede.",
         "log_time_at": "às",
         
         # Logs de Ações de Agendamento
-        "err_http_switch": "ERRO HTTP {code} ao comutar Destino [{dest:02d}] na Matriz [{ip}].",
-        "err_connection_switch": "FALHA DE CONEXÃO: Matriz KUMO [{ip}] inacessível na rede! Erro: {err}",
-        "log_routine_updated": "ROTINA ATUALIZADA (ID #{id} | UUID: {uuid}): [DE] Destino [{dest_old}] <- Origem [{src_old}] {time_at} {time_old} | [PARA] Destino [{dest_new}] <- Origem [{src_new}] {time_at} {time_new}",
-        "log_routine_added": "ROTINA ADICIONADA (ID #{id} | UUID: {uuid}): Destino [{dest}] <- Origem [{src}] {time_at} {time} | Frequência: {freq}",
-        "log_routine_deleted": "ROTINA REMOVIDA (ID #{id} | UUID: {uuid}): Destino [{dest}]",
-        "log_routine_removed": "ROTINA REMOVIDA (ID #{id} | UUID: {uuid}): Destino [{dest}] <- Origem [{src}] {time_at} {time} | Frequência: {freq}",
-        "log_single_event_removed": "EVENTO ÚNICO REMOVIDO (ID #{id} | UUID: {uuid}): Destino [{dest}] <- Origem [{src}] {time_at} {time} | Frequência: {freq}",
-        "log_routine_executed": "ROTINA EXECUTADA COM SUCESSO: Destino [{dest}] <- Origem [{src}]",
+        "err_http_switch": "Erro HTTP {code} ao comutar Destino [{dest:02d}].",
+        "err_connection_switch": "Falha ao comutar: Matriz no IP {ip} inacessível.",
+        "log_routine_updated": "Rotina atualizada: Destino [{dest_new}] <- Origem [{src_new}] {time_at} {time_new}",
+        "log_routine_added": "Rotina criada: Destino [{dest}] <- Origem [{src}] {time_at} {time}",
+        "log_routine_deleted": "Rotina removida: Destino [{dest}]",
+        "log_routine_removed": "Rotina removida: Destino [{dest}] <- Origem [{src}]",
+        "log_single_event_removed": "Evento removido: Destino [{dest}] <- Origem [{src}]",
+        "log_routine_executed": "Comutação executada com sucesso: Destino [{dest}] <- Origem [{src}]",
         
         # Interface Geral e Alertas
         "lbl_event_date": "Data do Evento (AAAA-MM-DD):",
@@ -161,7 +173,7 @@ LOCALES = {
         "settings_btn_edit_label": "Editar Rótulo",
         "settings_language_label": "Idioma do Sistema / Language:",
         
-        # Chaves Adicionadas / Corrigidas das Revisões
+        # Chaves de Edição de Rótulos
         "lbl_list_64_pattern": "Lista (Portas 01 a 64):",
         "btn_edit_label": "Editar Rótulo",
         "title_edit_label": "Editar Nome do Rótulo",
@@ -171,39 +183,51 @@ LOCALES = {
     },
     "en_US": {
         # Matrix IP Selection
+        "lbl_source_single": "Source",
+        "lbl_destination_single": "Destination",
+        "title_edit_selected": "EDIT SELECTED - {type} [{num:02d}]",
+        "msg_select_item_edit_type": "Please select a schedule from the list to edit.",
         "ip_title": "AjaSchedule - IP Configuration",
         "ip_instruction": "Enter the Matrix server IP address:",
         "btn_save_continue": "Save & Continue",
         "ip_warning_empty": "IP address cannot be empty!",
         "warning_title": "Warning",
 
+        # IP Validation & Change
+        "msg_invalid_ip_title": "Invalid IP",
+        "msg_invalid_ip_text": "The entered IP address is invalid. Please check and try again.",
+        "msg_ip_updated_success": "Matrix IP address updated successfully!",
+        "msg_success_title": "Success",
+        "lbl_current_ip": "Current IP:",
+        "log_ip_changed": "Matrix IP changed to {new}",
+
         # Factory Default Labels (Inputs / Outputs)
         "default_input_label": "Source {num}",
         "default_output_label": "Destination {num}",
 
         # System Logs & Connection
-        "log_initialized": "AjaSchedule initialized and operational.",
-        "log_conn_failed": "[INITIALIZATION] CONNECTION FAILED: Timeout reached (3s Timeout). KUMO Matrix at IP {ip} did not respond.",
-        "log_init_app": "AjaSchedule initialized and operational.",
-        "log_init_testing_conn": "[INITIALIZATION] Testing connection with KUMO Matrix ({ip})...",
-        "log_init_conn_success": "[INITIALIZATION] CONNECTION SUCCESSFUL with KUMO Matrix ({ip}) - Device Online and Operational.",
-        "log_init_conn_status": "[INITIALIZATION] KUMO Matrix ({ip}) responded with HTTP Status {status}.",
-        "log_init_conn_timeout": "[INITIALIZATION] CONNECTION FAILED: Timeout (3s limit). KUMO Matrix at IP {ip} did not respond.",
-        "log_init_conn_failed": "[INITIALIZATION] CONNECTION FAILED: KUMO Matrix ({ip}) unreachable. Error: {err}",
-        "log_save_agendamentos_failed": "Failed to save schedules to disk: {err}",
-        "log_status_check_failed": "Could not query previous status for Destination [{dest}]: {err}",
-        "log_conn_unreachable": "CONNECTION FAILED: KUMO Matrix [{ip}] unreachable on network! Error: {err}",
+        "log_initialized": "System initialized.",
+        "log_conn_failed": "Failed to connect to Matrix at IP {ip}.",
+        "log_init_app": "System initialized and ready.",
+        "log_init_testing_conn": "Testing connection with Matrix at IP {ip}...",
+        "log_init_conn_success": "Successfully connected to Matrix ({ip}).",
+        "log_init_conn_status": "Matrix response ({ip}): HTTP Status {status}.",
+        "log_init_conn_timeout": "Connection timed out at IP {ip}.",
+        "log_init_conn_failed": "Network error connecting to Matrix at IP {ip}.",
+        "log_save_agendamentos_failed": "Failed to save schedules.",
+        "log_status_check_failed": "Failed to query status for Destination [{dest}].",
+        "log_conn_unreachable": "Matrix at IP {ip} is unreachable on the network.",
         "log_time_at": "at",
 
         # Schedule Actions Logs
-        "err_http_switch": "HTTP ERROR {code} switching Destination [{dest:02d}] on Router [{ip}].",
-        "err_connection_switch": "CONNECTION FAILURE: KUMO Router [{ip}] unreachable on network! Error: {err}",
-        "log_routine_updated": "ROUTINE UPDATED (ID #{id} | UUID: {uuid}): [FROM] Destination [{dest_old}] <- Source [{src_old}] {time_at} {time_old} | [TO] Destination [{dest_new}] <- Source [{src_new}] {time_at} {time_new}",
-        "log_routine_added": "ROUTINE ADDED (ID #{id} | UUID: {uuid}): Destination [{dest}] <- Source [{src}] {time_at} {time} | Frequency: {freq}",
-        "log_routine_deleted": "ROUTINE REMOVED (ID #{id} | UUID: {uuid}): Destination [{dest}]",
-        "log_routine_removed": "ROUTINE REMOVED (ID #{id} | UUID: {uuid}): Destination [{dest}] <- Source [{src}] {time_at} {time} | Frequency: {freq}",
-        "log_single_event_removed": "SINGLE EVENT REMOVED (ID #{id} | UUID: {uuid}): Destination [{dest}] <- Source [{src}] {time_at} {time} | Frequency: {freq}",
-        "log_routine_executed": "ROUTINE EXECUTED SUCCESSFULLY: Destination [{dest}] <- Source [{src}]",
+        "err_http_switch": "HTTP Error {code} switching Destination [{dest:02d}].",
+        "err_connection_switch": "Switch failed: Matrix at IP {ip} unreachable.",
+        "log_routine_updated": "Routine updated: Destination [{dest_new}] <- Source [{src_new}] {time_at} {time_new}",
+        "log_routine_added": "Routine created: Destination [{dest}] <- Source [{src}] {time_at} {time}",
+        "log_routine_deleted": "Routine removed: Destination [{dest}]",
+        "log_routine_removed": "Routine removed: Destination [{dest}] <- Source [{src}]",
+        "log_single_event_removed": "Event removed: Destination [{dest}] <- Source [{src}]",
+        "log_routine_executed": "Switch executed successfully: Destination [{dest}] <- Source [{src}]",
 
         # General UI & Alerts
         "lbl_event_date": "Event Date (YYYY-MM-DD):",
@@ -328,7 +352,7 @@ LOCALES = {
         "settings_btn_edit_label": "Edit Label",
         "settings_language_label": "System Language / Idioma:",
         
-        # Added / Fixed Keys from Reviews
+        # Labels Editing
         "lbl_list_64_pattern": "List (Ports 01 to 64):",
         "btn_edit_label": "Edit Label",
         "title_edit_label": "Edit Label Name",
@@ -338,39 +362,51 @@ LOCALES = {
     },
     "es_ES": {
         # Selección de IP de Matriz
+        "lbl_source_single": "Origen",
+        "lbl_destination_single": "Destino",
+        "title_edit_selected": "EDITAR SELECCIÓN - {type} [{num:02d}]",
+        "msg_select_item_edit_type": "Por favor, seleccione una programación de la lista para editar.",
         "ip_title": "AjaSchedule - Configuración de IP",
         "ip_instruction": "Ingrese la IP del servidor de Matriz:",
         "btn_save_continue": "Guardar y Continuar",
         "ip_warning_empty": "¡La dirección IP no puede estar vacía!",
         "warning_title": "Aviso",
 
+        # Validación y Cambio de IP
+        "msg_invalid_ip_title": "IP Inválida",
+        "msg_invalid_ip_text": "La dirección IP ingresada no es válida. Por favor, verifique e intente nuevamente.",
+        "msg_ip_updated_success": "¡Dirección IP de la Matriz actualizada con éxito!",
+        "msg_success_title": "Éxito",
+        "lbl_current_ip": "IP Actual:",
+        "log_ip_changed": "IP de la Matriz cambiada a {new}",
+
         # Etiquetas Por Defecto de Fábrica (Entradas / Salidas)
         "default_input_label": "Origen {num}",
         "default_output_label": "Destino {num}",
 
         # Logs del Sistema y Conexión
-        "log_initialized": "AjaSchedule inicializado y operativo.",
-        "log_conn_failed": "[INICIALIZACIÓN] ERROR DE CONEXIÓN: Tiempo de espera agotado (Timeout 3s). Matriz KUMO en la IP {ip} no respondió.",
-        "log_init_app": "AjaSchedule inicializado y operativo.",
-        "log_init_testing_conn": "[INICIALIZACIÓN] Probando conexión con la Matriz KUMO ({ip})...",
-        "log_init_conn_success": "[INICIALIZACIÓN] CONEXIÓN EXITOSA con la Matriz KUMO ({ip}) - Equipo Online y Operativo.",
-        "log_init_conn_status": "[INICIALIZACIÓN] Matriz KUMO ({ip}) respondió con Estado HTTP {status}.",
-        "log_init_conn_timeout": "[INICIALIZACIÓN] ERROR DE CONEXIÓN: Tiempo agotado (3s). Matriz KUMO en la IP {ip} no respondió.",
-        "log_init_conn_failed": "[INICIALIZACIÓN] ERROR DE CONEXIÓN: Matriz KUMO ({ip}) inaccesible. Error: {err}",
-        "log_save_agendamentos_failed": "Error al guardar programaciones en disco: {err}",
-        "log_status_check_failed": "No se pudo consultar el estado previo del Destino [{dest}]: {err}",
-        "log_conn_unreachable": "ERROR DE CONEXIÓN: ¡Matriz KUMO [{ip}] inaccesible en la red! Error: {err}",
+        "log_initialized": "Sistema inicializado.",
+        "log_conn_failed": "Error al conectar con la Matriz en la IP {ip}.",
+        "log_init_app": "Sistema inicializado y listo.",
+        "log_init_testing_conn": "Probando conexión con la Matriz en la IP {ip}...",
+        "log_init_conn_success": "Conectado con éxito a la Matriz ({ip}).",
+        "log_init_conn_status": "Respuesta de la Matriz ({ip}): Estado HTTP {status}.",
+        "log_init_conn_timeout": "Tiempo de espera agotado en la IP {ip}.",
+        "log_init_conn_failed": "Error de red al conectar a la Matriz en la IP {ip}.",
+        "log_save_agendamentos_failed": "Error al guardar programaciones.",
+        "log_status_check_failed": "Error al consultar el estado del Destino [{dest}].",
+        "log_conn_unreachable": "Matriz en la IP {ip} no está accesible en la red.",
         "log_time_at": "a las",
 
         # Logs de Acciones
-        "err_http_switch": "ERROR HTTP {code} al conmutar Destino [{dest:02d}] en la Matriz [{ip}].",
-        "err_connection_switch": "FALLO DE CONEXIÓN: ¡Matriz KUMO [{ip}] inaccesible en la red! Error: {err}",
-        "log_routine_updated": "RUTINA ACTUALIZADA (ID #{id} | UUID: {uuid}): [DE] Destino [{dest_old}] <- Origen [{src_old}] {time_at} {time_old} | [PARA] Destino [{dest_new}] <- Origen [{src_new}] {time_at} {time_new}",
-        "log_routine_added": "RUTINA AGREGADA (ID #{id} | UUID: {uuid}): Destino [{dest}] <- Origen [{src}] {time_at} {time} | Frecuencia: {freq}",
-        "log_routine_deleted": "RUTINA ELIMINADA (ID #{id} | UUID: {uuid}): Destino [{dest}]",
-        "log_routine_removed": "RUTINA ELIMINADA (ID #{id} | UUID: {uuid}): Destino [{dest}] <- Origen [{src}] {time_at} {time} | Frecuencia: {freq}",
-        "log_single_event_removed": "EVENTO ÚNICO ELIMINADO (ID #{id} | UUID: {uuid}): Destino [{dest}] <- Origen [{src}] {time_at} {time} | Frecuencia: {freq}",
-        "log_routine_executed": "RUTINA EJECUTADA CON ÉXITO: Destino [{dest}] <- Origen [{src}]",
+        "err_http_switch": "Error HTTP {code} al conmutar Destino [{dest:02d}].",
+        "err_connection_switch": "Fallo al conmutar: Matriz en la IP {ip} inaccesible.",
+        "log_routine_updated": "Rutina actualizada: Destino [{dest_new}] <- Origen [{src_new}] {time_at} {time_new}",
+        "log_routine_added": "Rutina creada: Destino [{dest}] <- Origen [{src}] {time_at} {time}",
+        "log_routine_deleted": "Rutina eliminada: Destino [{dest}]",
+        "log_routine_removed": "Rutina eliminada: Destino [{dest}] <- Origen [{src}]",
+        "log_single_event_removed": "Evento eliminado: Destino [{dest}] <- Origen [{src}]",
+        "log_routine_executed": "Conmutación ejecutada con éxito: Destino [{dest}] <- Origen [{src}]",
 
         # Interfaz General
         "lbl_event_date": "Fecha del Evento (AAAA-MM-DD):",
@@ -416,7 +452,7 @@ LOCALES = {
         "btn_confirm_selection": "CONFIRMAR SELECCIÓN",
         "title_select_destination": "Seleccionar Destino",
         "header_select_destination": "SELECCIONE EL DESTINO",
-        "title_select_source": "Seleccionar Origen",
+        "title_select_source": "Seleccionar Origem",
         "header_select_source": "SELECCIONE EL ORIGEN",
         "title_select_hour": "Seleccionar Hora",
         "header_select_hour": "SELECCIONE LA HORA",
@@ -492,7 +528,7 @@ LOCALES = {
         "settings_btn_edit_label": "Editar Etiqueta",
         "settings_language_label": "Idioma del Sistema / Language:",
         
-        # Claves agregadas / corregidas de las revisiones
+        # Edición de Etiquetas
         "lbl_list_64_pattern": "Lista (Puertos 01 a 64):",
         "btn_edit_label": "Editar Etiqueta",
         "title_edit_label": "Editar Nombre de la Etiqueta",
