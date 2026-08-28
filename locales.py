@@ -27,6 +27,7 @@ LOCALES = {
         "default_output_label": "Destino {num}",
 
         # Logs do Sistema e Conexão
+        "status_connection_error": "Erro de Conexão",
         "msg_connection_alert_title": "Erro de Conexão",
         "msg_connection_alert_text": "Falha ao conectar à Matriz no IP {ip}.",
         "msg_check_cable": "Verifique o cabo de rede ou o endereço configurado.",
@@ -226,6 +227,7 @@ LOCALES = {
         "log_time_at": "at",
 
         # Schedule Actions Logs
+        "status_connection_error": "Connection Error",
         "err_http_switch": "HTTP Error {code} switching Destination [{dest:02d}].",
         "err_connection_switch": "Switch failed: Matrix at IP {ip} unreachable.",
         "log_routine_updated": "Routine updated: Destination [{dest_new}] <- Source [{src_new}] {time_at} {time_new}",
@@ -408,6 +410,7 @@ LOCALES = {
         "log_time_at": "a las",
 
         # Logs de Acciones
+        "status_connection_error": "Error de Conexión",
         "err_http_switch": "Error HTTP {code} al conmutar Destino [{dest:02d}].",
         "err_connection_switch": "Fallo al conmutar: Matriz en la IP {ip} inaccesible.",
         "log_routine_updated": "Rutina actualizada: Destino [{dest_new}] <- Origen [{src_new}] {time_at} {time_new}",
@@ -546,7 +549,6 @@ LOCALES = {
         "msg_label_updated_text": "¡Etiqueta actualizada con éxito!",
     }
 }
-
 
 class I18n:
     """Gerenciador central de i18n para suporte a dicionários dinâmicos."""
