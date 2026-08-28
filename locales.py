@@ -27,6 +27,9 @@ LOCALES = {
         "default_output_label": "Destino {num}",
 
         # Logs do Sistema e Conexão
+        "msg_connection_alert_title": "Erro de Conexão",
+        "msg_connection_alert_text": "Falha ao conectar à Matriz no IP {ip}.",
+        "msg_check_cable": "Verifique o cabo de rede ou o endereço configurado.",
         "log_initialized": "Sistema inicializado.",
         "log_conn_failed": "Falha ao conectar com a Matriz no IP {ip}.",
         "log_init_app": "Sistema inicializado e pronto.",
@@ -206,6 +209,9 @@ LOCALES = {
         "default_output_label": "Destination {num}",
 
         # System Logs & Connection
+        "msg_connection_alert_title": "Connection Error",
+        "msg_connection_alert_text": "Failed to connect to Matrix at IP {ip}.",
+        "msg_check_cable": "Please check the network cable or configured IP address.",
         "log_initialized": "System initialized.",
         "log_conn_failed": "Failed to connect to Matrix at IP {ip}.",
         "log_init_app": "System initialized and ready.",
@@ -385,6 +391,9 @@ LOCALES = {
         "default_output_label": "Destino {num}",
 
         # Logs del Sistema y Conexión
+        "msg_connection_alert_title": "Error de Conexión",
+        "msg_connection_alert_text": "Error al conectar con la Matriz en la IP {ip}.",
+        "msg_check_cable": "Verifique el cable de red o la dirección configurada.",
         "log_initialized": "Sistema inicializado.",
         "log_conn_failed": "Error al conectar con la Matriz en la IP {ip}.",
         "log_init_app": "Sistema inicializado y listo.",
