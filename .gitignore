@@ -10,3 +10,6 @@ node_modules/
 *.exe
 *.log
 logs/
+
+# Testes
+.pytest_cache/
