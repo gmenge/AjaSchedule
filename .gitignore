@@ -5,3 +5,11 @@ Logs/
 node_modules/
 *.Log
 *.json
+
+# Dados locais e arquivos gerados
+*.exe
+*.log
+logs/
+
+# Testes
+.pytest_cache/
